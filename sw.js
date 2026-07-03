@@ -1,5 +1,5 @@
 /* 에스원 Answer — Service Worker (오프라인/설치형 PWA) */
-const CACHE = 'answer-v2';
+const CACHE = 'answer-v3';
 const ASSETS = [
   './',
   './index.html',
