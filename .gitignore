@@ -12,3 +12,7 @@ logo.png.gif
 Thumbs.db
 .DS_Store
 *.log
+
+# 참고용 생성/캡처 이미지
+Gemini_Generated_Image*.png
+*_preview*.png
