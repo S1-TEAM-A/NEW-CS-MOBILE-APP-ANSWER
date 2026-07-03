@@ -30,21 +30,21 @@
   --text:#EDF2FF;
   --muted:#93A2C6;
   --muted2:#66759B;
-  --primary:#22D3AE;
-  --primary2:#2E8BF6;
-  --violet:#2E8BF6;
-  --violet2:#5AA6FF;
+  --primary:#00BFA5;
+  --primary2:#0056D2;
+  --violet:#0056D2;
+  --violet2:#4C8DF0;
   --danger:#FF5B72;
   --warn:#FFB020;
-  --ok:#25C56A;
-  --blue:#2E8BF6;
-  --grad:linear-gradient(135deg,#2E7BF6 0%,#1FC6C0 52%,#25C56A 100%);
-  --grad-mint:linear-gradient(135deg,#17C9C0 0%,#28C56A 100%);
+  --ok:#00BFA5;
+  --blue:#0056D2;
+  --grad:linear-gradient(135deg,#0056D2 0%,#0082BB 52%,#00BFA5 100%);
+  --grad-mint:linear-gradient(135deg,#0288C5 0%,#00BFA5 100%);
   --grad-danger:linear-gradient(135deg,#FF6B7E 0%,#FF3D6B 100%);
   --radius:22px;
   --radius-s:14px;
   --shadow:0 18px 50px -18px rgba(0,0,0,.65);
-  --shadow-glow:0 10px 40px -8px rgba(34,197,140,.4);
+  --shadow-glow:0 10px 40px -8px rgba(0,191,165,.42);
   --spring:cubic-bezier(.22,1,.36,1);
   --spring2:cubic-bezier(.34,1.56,.64,1);
   --ease:cubic-bezier(.4,0,.2,1);
@@ -56,8 +56,8 @@ html,body{margin:0;padding:0;height:100%;}
 body{
   font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Malgun Gothic',sans-serif;
   background:
-     radial-gradient(1200px 700px at 80% -10%, rgba(76,141,255,.10), transparent 60%),
-     radial-gradient(900px 600px at -10% 20%, rgba(46,123,246,.10), transparent 55%),
+     radial-gradient(1200px 700px at 80% -10%, rgba(0,86,210,.10), transparent 60%),
+     radial-gradient(900px 600px at -10% 20%, rgba(0,86,210,.10), transparent 55%),
      var(--bg);
   color:var(--text);
   display:flex;align-items:center;justify-content:center;
@@ -96,7 +96,7 @@ textarea,input,button{word-break:keep-all;overflow-wrap:break-word;}
 .screens{position:relative;flex:1;overflow:hidden;}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;will-change:transform,opacity;
   background:
-    radial-gradient(850px 480px at 12% -6%, rgba(46,123,246,.15), transparent 58%),
+    radial-gradient(850px 480px at 12% -6%, rgba(0,86,210,.15), transparent 58%),
     radial-gradient(760px 480px at 92% 106%, rgba(37,197,106,.13), transparent 58%),
     var(--bg);}
 .screen::before{content:"";position:absolute;top:34%;left:-14%;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(31,198,192,.20),transparent 70%);filter:blur(55px);z-index:0;pointer-events:none;animation:orbA 17s ease-in-out infinite;}
@@ -138,18 +138,18 @@ textarea,input,button{word-break:keep-all;overflow-wrap:break-word;}
 
 /* ---------- Chips & badges ---------- */
 .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:700;background:var(--surface2);border:1px solid var(--line);color:var(--muted);}
-.chip.on{background:rgba(34,197,140,.14);border-color:rgba(34,197,140,.4);color:var(--primary);}
+.chip.on{background:rgba(0,191,165,.14);border-color:rgba(0,191,165,.4);color:var(--primary);}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:9px;font-size:11.5px;font-weight:800;letter-spacing:.01em;}
 .b-high{background:rgba(255,91,114,.16);color:#FF8494;}
 .b-mid{background:rgba(255,176,32,.15);color:#FFC24D;}
-.b-low{background:rgba(76,141,255,.15);color:#84AEFF;}
+.b-low{background:rgba(0,86,210,.15);color:#84AEFF;}
 .b-done{background:rgba(45,212,191,.15);color:#5BE3CE;}
 .dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;}
 
 /* ---------- Buttons ---------- */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:16px;border:none;font-size:15.5px;font-weight:800;cursor:pointer;color:#04121a;background:var(--grad-mint);box-shadow:var(--shadow-glow);transition:transform .16s var(--spring2),box-shadow .2s;letter-spacing:-.01em;font-family:inherit;}
 .btn:active{transform:scale(.965);}
-.btn.grad{background:var(--grad);color:#fff;box-shadow:0 10px 34px -10px rgba(76,141,255,.6);}
+.btn.grad{background:var(--grad);color:#fff;box-shadow:0 10px 34px -10px rgba(0,86,210,.6);}
 .btn.ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line2);box-shadow:none;}
 .btn.danger{background:var(--grad-danger);color:#fff;box-shadow:0 10px 30px -10px rgba(255,61,107,.5);}
 .btn.sm{padding:11px 14px;font-size:13.5px;border-radius:13px;width:auto;box-shadow:none;}
@@ -204,13 +204,13 @@ textarea,input,button{word-break:keep-all;overflow-wrap:break-word;}
 .wave{display:flex;align-items:center;justify-content:center;gap:4px;height:70px;}
 .wave i{width:5px;border-radius:5px;background:var(--grad-mint);animation:wv 1s ease-in-out infinite;}
 @keyframes wv{0%,100%{height:12px;}50%{height:52px;}}
-.mic{width:88px;height:88px;border-radius:50%;background:var(--grad-mint);display:grid;place-items:center;margin:6px auto;box-shadow:0 0 0 0 rgba(34,197,140,.5);animation:micpulse 1.6s infinite;}
-@keyframes micpulse{0%{box-shadow:0 0 0 0 rgba(34,197,140,.45);}70%{box-shadow:0 0 0 26px rgba(34,197,140,0);}100%{box-shadow:0 0 0 0 rgba(34,197,140,0);}}
+.mic{width:88px;height:88px;border-radius:50%;background:var(--grad-mint);display:grid;place-items:center;margin:6px auto;box-shadow:0 0 0 0 rgba(0,191,165,.5);animation:micpulse 1.6s infinite;}
+@keyframes micpulse{0%{box-shadow:0 0 0 0 rgba(0,191,165,.45);}70%{box-shadow:0 0 0 26px rgba(0,191,165,0);}100%{box-shadow:0 0 0 0 rgba(0,191,165,0);}}
 
 /* ---------- Checklist ---------- */
 .check{display:flex;align-items:flex-start;gap:13px;padding:15px;border-radius:16px;background:var(--surface2);border:1.5px solid var(--line);cursor:pointer;transition:border-color .25s,background .25s,transform .12s var(--spring2);margin-bottom:10px;}
 .check:active{transform:scale(.985);}
-.check.sel{border-color:var(--primary);background:rgba(34,197,140,.08);}
+.check.sel{border-color:var(--primary);background:rgba(0,191,165,.08);}
 .check .box{width:26px;height:26px;border-radius:9px;border:2px solid var(--line2);flex:none;display:grid;place-items:center;transition:.25s;margin-top:1px;}
 .check.sel .box{background:var(--grad-mint);border-color:transparent;}
 .check .box svg{opacity:0;transform:scale(.4);transition:.3s var(--spring2);}
@@ -222,7 +222,7 @@ textarea,input,button{word-break:keep-all;overflow-wrap:break-word;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* ---------- Success burst ---------- */
-.burst{width:110px;height:110px;border-radius:50%;background:var(--grad-mint);display:grid;place-items:center;margin:20px auto;position:relative;animation:pop .55s var(--spring2) both;box-shadow:0 0 60px -6px rgba(34,197,140,.6);}
+.burst{width:110px;height:110px;border-radius:50%;background:var(--grad-mint);display:grid;place-items:center;margin:20px auto;position:relative;animation:pop .55s var(--spring2) both;box-shadow:0 0 60px -6px rgba(0,191,165,.6);}
 @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
 .burst svg path{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .5s .25s forwards var(--ease);}
 @keyframes draw{to{stroke-dashoffset:0;}}
@@ -258,18 +258,18 @@ textarea,input{font-family:inherit;}
 /* ============ 항상 살아있는 모션 ============ */
 /* 배경 앰비언트 오브 (블루·그린이 계속 부유) */
 .orb{position:absolute;border-radius:50%;filter:blur(64px);z-index:0;pointer-events:none;opacity:.55;}
-.orb1{width:340px;height:340px;background:radial-gradient(circle,rgba(46,123,246,.6),transparent 70%);top:-70px;left:-90px;animation:orbA 15s ease-in-out infinite;}
+.orb1{width:340px;height:340px;background:radial-gradient(circle,rgba(0,86,210,.6),transparent 70%);top:-70px;left:-90px;animation:orbA 15s ease-in-out infinite;}
 .orb2{width:320px;height:320px;background:radial-gradient(circle,rgba(37,197,106,.52),transparent 70%);bottom:-50px;right:-80px;animation:orbB 18s ease-in-out infinite;}
 .orb3{width:240px;height:240px;background:radial-gradient(circle,rgba(31,198,192,.4),transparent 70%);top:42%;left:56%;animation:orbA 21s ease-in-out infinite reverse;}
 @keyframes orbA{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(46px,64px) scale(1.16);}}
 @keyframes orbB{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-54px,-46px) scale(1.12);}}
 
 /* 무한대(∞) 브랜드 로고 — 빛이 계속 흐름 */
-.logoTile{width:92px;height:92px;border-radius:26px;background:#fff;display:grid;place-items:center;margin:0 auto;box-shadow:0 22px 55px -12px rgba(46,123,246,.5),0 0 0 1px rgba(255,255,255,.08);animation:tileFloat 4.8s ease-in-out infinite;}
-.logoImg{width:190px;max-width:64%;height:auto;display:block;margin:0 auto;animation:tileFloat 4.8s ease-in-out infinite;filter:drop-shadow(0 18px 40px rgba(46,123,246,.4));}
+.logoTile{width:92px;height:92px;border-radius:26px;background:#fff;display:grid;place-items:center;margin:0 auto;box-shadow:0 22px 55px -12px rgba(0,86,210,.5),0 0 0 1px rgba(255,255,255,.08);animation:tileFloat 4.8s ease-in-out infinite;}
+.logoImg{width:190px;max-width:64%;height:auto;display:block;margin:0 auto;animation:tileFloat 4.8s ease-in-out infinite;filter:drop-shadow(0 18px 40px rgba(0,86,210,.4));}
 @keyframes tileFloat{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-10px) rotate(-1.5deg);}}
 .inf{width:56px;height:36px;overflow:visible;}
-.inf .base{fill:none;stroke:url(#infg);stroke-width:9.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 5px rgba(46,123,246,.3));}
+.inf .base{fill:none;stroke:url(#infg);stroke-width:9.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 5px rgba(0,86,210,.3));}
 .inf .flow{fill:none;stroke:#fff;stroke-width:9.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22 168;stroke-dashoffset:0;opacity:.85;animation:infFlow 2.6s linear infinite;}
 @keyframes infFlow{to{stroke-dashoffset:-190;}}
 .infMini{width:26px;height:18px;overflow:visible;}
@@ -290,17 +290,17 @@ textarea,input{font-family:inherit;}
 /* 동선 드래그 재정렬 */
 .rrow{transition:border-color .2s,transform .16s var(--spring),opacity .2s;}
 .rrow.dragging{opacity:.35;}
-.rrow.over{border-color:var(--primary)!important;transform:scale(1.015);box-shadow:0 8px 24px -10px rgba(34,197,140,.5);}
+.rrow.over{border-color:var(--primary)!important;transform:scale(1.015);box-shadow:0 8px 24px -10px rgba(0,191,165,.5);}
 .grip{cursor:grab;color:var(--muted2);flex:none;padding:2px;display:grid;place-items:center;stroke-width:2.6;}
 .grip:active{cursor:grabbing;color:var(--primary);}
 /* 조치 원인별 완료 체크 */
 .cdone{color:rgba(140,160,210,.25);}
-.gcause.done{border-color:rgba(34,197,140,.45);}
+.gcause.done{border-color:rgba(0,191,165,.45);}
 .gcause.done .cdone{background:var(--grad-mint);border-color:transparent;color:#04121a;}
 /* AI 분석 중 인터스티셜 */
 .aiov{position:absolute;inset:0;z-index:82;background:rgba(7,11,22,.78);backdrop-filter:blur(9px);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none;padding:0 44px;}
 .aiov.show{opacity:1;pointer-events:auto;}
-.aiov-orb{width:96px;height:96px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;position:relative;box-shadow:0 0 55px -6px rgba(46,123,246,.65);animation:aiPulse 1.4s ease-in-out infinite;}
+.aiov-orb{width:96px;height:96px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;position:relative;box-shadow:0 0 55px -6px rgba(0,86,210,.65);animation:aiPulse 1.4s ease-in-out infinite;}
 @keyframes aiPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.09);}}
 .aiov-orb::before,.aiov-orb::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(47,227,198,.55);animation:aiRing 1.9s ease-out infinite;}
 .aiov-orb::after{animation-delay:.95s;}
@@ -320,8 +320,8 @@ textarea,input{font-family:inherit;}
   <div class="phone">
     <div class="notch"></div>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-      <linearGradient id="infg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E7BF6"/><stop offset=".55" stop-color="#1FC6C0"/><stop offset="1" stop-color="#25C56A"/></linearGradient>
-      <linearGradient id="infg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E7BF6"/><stop offset="1" stop-color="#25C56A"/></linearGradient>
+      <linearGradient id="infg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0056D2"/><stop offset=".52" stop-color="#0082BB"/><stop offset="1" stop-color="#00BFA5"/></linearGradient>
+      <linearGradient id="infg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0056D2"/><stop offset="1" stop-color="#00BFA5"/></linearGradient>
       <filter id="brandShadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#1746c9" flood-opacity="0.55"/></filter>
     </defs></svg>
     <div class="app">
@@ -1688,7 +1688,7 @@ VIEWS.home=()=>{
   </div>
 
   <div style="padding:4px 20px 0" class="stagger">
-    <div class="card g" style="animation-delay:.05s;padding:20px;background:linear-gradient(140deg,rgba(76,141,255,.18),rgba(46,123,246,.12));border-color:var(--line2)">
+    <div class="card g" style="animation-delay:.05s;padding:20px;background:linear-gradient(140deg,rgba(0,86,210,.18),rgba(0,86,210,.12));border-color:var(--line2)">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <div class="tiny muted" style="font-weight:700">오늘 처리할 VOC</div>
@@ -1705,7 +1705,7 @@ VIEWS.home=()=>{
 
     <div style="animation-delay:.14s;margin-top:16px">
       <div class="tiny" style="color:var(--primary);font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px">${ic('nav',14)} AI 추천 · 가장 가까운 긴급 고객</div>
-      <div class="card" data-voc="${top.id}" style="cursor:pointer;border:1.5px solid rgba(34,197,140,.35);box-shadow:0 0 34px -14px rgba(34,197,140,.5)">
+      <div class="card" data-voc="${top.id}" style="cursor:pointer;border:1.5px solid rgba(0,191,165,.35);box-shadow:0 0 34px -14px rgba(0,191,165,.5)">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span class="badge ${URG[top.urgency].c}"><span class="dot"></span>${URG[top.urgency].t}</span>
           <span class="tiny muted">${top.dist}km · 차량 ${top.eta}분</span>
@@ -1823,9 +1823,9 @@ VIEWS.detail=({id})=>{
         <div><div class="tiny muted">예약</div><div style="font-weight:800">${v.reserve.replace('오늘 ','')}</div></div>
       </div>
       <div style="display:flex;gap:8px;margin-top:18px">
-        <button class="iconbtn" data-call="${v.phone}"><span class="ic" style="background:rgba(34,197,140,.15);color:var(--primary)">${ic('phone',20)}</span>전화</button>
-        <button class="iconbtn" data-sms="${v.id}"><span class="ic" style="background:rgba(76,141,255,.15);color:#84AEFF">${ic('msg',20)}</span>문자</button>
-        <button class="iconbtn" data-nav="${v.id}"><span class="ic" style="background:rgba(46,123,246,.15);color:var(--violet2)">${ic('nav',20)}</span>길찾기</button>
+        <button class="iconbtn" data-call="${v.phone}"><span class="ic" style="background:rgba(0,191,165,.15);color:var(--primary)">${ic('phone',20)}</span>전화</button>
+        <button class="iconbtn" data-sms="${v.id}"><span class="ic" style="background:rgba(0,86,210,.15);color:#84AEFF">${ic('msg',20)}</span>문자</button>
+        <button class="iconbtn" data-nav="${v.id}"><span class="ic" style="background:rgba(0,86,210,.15);color:var(--violet2)">${ic('nav',20)}</span>길찾기</button>
         <button class="iconbtn" data-schedule="${v.id}"><span class="ic" style="background:rgba(255,176,32,.15);color:#FFC24D">${ic('clock',20)}</span>일정</button>
       </div>
     </div>
@@ -1880,7 +1880,7 @@ VIEWS.aiToggle=({id})=>{
   </div>
   <div style="padding:22px 20px 0" class="stagger">
     <!-- AI 사용 -->
-    <div class="card" data-ai="use" data-id="${id}" style="animation-delay:.05s;cursor:pointer;border:1.5px solid rgba(34,197,140,.4);background:linear-gradient(155deg,rgba(34,197,140,.1),rgba(17,26,46,.9))">
+    <div class="card" data-ai="use" data-id="${id}" style="animation-delay:.05s;cursor:pointer;border:1.5px solid rgba(0,191,165,.4);background:linear-gradient(155deg,rgba(0,191,165,.1),rgba(17,26,46,.9))">
       <div style="display:flex;align-items:center;gap:12px">
         <div style="width:50px;height:50px;border-radius:15px;background:var(--grad-mint);display:grid;place-items:center;color:#04121a">${ic('ai',26)}</div>
         <div style="flex:1">
@@ -1905,7 +1905,7 @@ VIEWS.aiToggle=({id})=>{
         </div>
         <span class="muted">${ic('chevR',20)}</span>
       </div>
-      <div style="background:rgba(46,123,246,.1);border-radius:12px;padding:11px 13px;margin-top:14px;font-size:12.5px;color:var(--violet2);line-height:1.5">
+      <div style="background:rgba(0,86,210,.1);border-radius:12px;padding:11px 13px;margin-top:14px;font-size:12.5px;color:var(--violet2);line-height:1.5">
         ${ic('flash',13)} 숙련자님의 조치 결과는 <b>AI 가이드 개선</b>에 소중하게 활용돼요.
       </div>
     </div>
@@ -1932,7 +1932,7 @@ VIEWS.diagnose=({id})=>{
     <div style="font-weight:850;font-size:18px">표준 AI 가이드 준비 중</div>
     <p class="muted" style="margin-top:10px;font-size:13.5px;line-height:1.65">「${v.codeName}」 유형은 아직 표준 진단·조치 가이드가 학습되지 않았어요.<br>지금은 <b style="color:var(--primary)">현장 전문가의 판단</b>이 가장 정확합니다.</p>
   </div>
-  <div class="card" style="margin-top:12px;background:rgba(46,123,246,.1);border-color:var(--line2);display:flex;gap:11px;align-items:center">
+  <div class="card" style="margin-top:12px;background:rgba(0,86,210,.1);border-color:var(--line2);display:flex;gap:11px;align-items:center">
     <div style="width:36px;height:36px;border-radius:11px;background:var(--violet);display:grid;place-items:center;flex:none;color:#fff">${ic('flash',18)}</div>
     <div class="tiny" style="line-height:1.55">지금 입력하시는 조치 결과가 <b style="color:var(--violet2)">${v.code} 가이드</b>의 학습 데이터가 됩니다. 다음 CS가 더 빨라져요.</div>
   </div>
@@ -1944,7 +1944,7 @@ VIEWS.diagnose=({id})=>{
 <div style="padding:0 20px 12px"><div class="steps"><i class="on"></i><i></i><i></i></div><div class="tiny muted" style="margin-top:8px">1/3 · 원인 진단</div></div>
 <div class="scroll">
   <div style="padding:6px 20px 0" class="fadein">
-    <div class="card" style="background:linear-gradient(150deg,rgba(76,141,255,.14),rgba(17,26,46,.9));border-color:var(--line2);display:flex;gap:12px;align-items:flex-start">
+    <div class="card" style="background:linear-gradient(150deg,rgba(0,86,210,.14),rgba(17,26,46,.9));border-color:var(--line2);display:flex;gap:12px;align-items:flex-start">
       <div style="width:38px;height:38px;border-radius:12px;background:var(--grad);display:grid;place-items:center;flex:none;color:#fff">${ic('ai',20)}</div>
       <div>
         <div style="font-weight:800;font-size:14px">AI 분석 완료</div>
@@ -2016,7 +2016,7 @@ VIEWS.result=({id})=>{
 <div class="scroll">
   <div style="padding:6px 20px 0" class="fadein">
     ${auto?`
-    <div class="card" style="background:linear-gradient(150deg,rgba(34,197,140,.12),rgba(17,26,46,.9));border-color:rgba(34,197,140,.35);display:flex;gap:11px;align-items:center">
+    <div class="card" style="background:linear-gradient(150deg,rgba(0,191,165,.12),rgba(17,26,46,.9));border-color:rgba(0,191,165,.35);display:flex;gap:11px;align-items:center">
       <div style="width:38px;height:38px;border-radius:12px;background:var(--grad-mint);display:grid;place-items:center;flex:none;color:#04121a">${ic('ai',20)}</div>
       <div><div style="font-weight:800;font-size:14px">AI가 조치 결과를 작성했어요</div><div class="tiny muted">수행한 진단·조치를 바탕으로 표준 문구를 생성했습니다.<br>자유롭게 수정하세요.</div></div>
     </div>`:''}
@@ -2025,7 +2025,7 @@ VIEWS.result=({id})=>{
     <textarea class="ta" id="resultTa" rows="4" placeholder="조치 내용을 입력하세요" ${willType?'data-type="1"':''}>${willType?'':st.result}</textarea>
     <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
       ${((g?g.items:[]).slice(0,3)).map(it=>`<span class="chip tiny" data-quick="${it.r.replace(/"/g,'&quot;')}" style="cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">+ ${it.r.slice(0,16)}…</span>`).join('')}
-      <span class="chip tiny" data-voice="${id}" style="cursor:pointer;color:var(--primary);border-color:rgba(34,197,140,.4)">${ic('mic',12)} 음성으로 추가</span>
+      <span class="chip tiny" data-voice="${id}" style="cursor:pointer;color:var(--primary);border-color:rgba(0,191,165,.4)">${ic('mic',12)} 음성으로 추가</span>
     </div>
 
     <div class="section-t" style="margin-left:2px">처리 상태</div>
@@ -2061,7 +2061,7 @@ VIEWS.done=({id})=>{
     <div class="kv" style="border:none;flex-direction:column;align-items:flex-start;gap:6px"><span class="k">조치 결과</span><span class="v" style="text-align:left;font-weight:600;line-height:1.5">${st.result}</span></div>
   </div>
   ${st.aiMode==='skip'?`
-  <div class="card fadein" style="animation-delay:.52s;margin-top:12px;background:linear-gradient(150deg,rgba(46,123,246,.14),rgba(17,26,46,.9));border-color:var(--line2);text-align:left;display:flex;gap:11px;align-items:center">
+  <div class="card fadein" style="animation-delay:.52s;margin-top:12px;background:linear-gradient(150deg,rgba(0,86,210,.14),rgba(17,26,46,.9));border-color:var(--line2);text-align:left;display:flex;gap:11px;align-items:center">
     <div style="width:36px;height:36px;border-radius:11px;background:var(--violet);display:grid;place-items:center;flex:none">${ic('flash',18)}</div>
     <div class="tiny" style="line-height:1.5">입력하신 조치 결과가 <b style="color:var(--violet2)">'접수코드 ${v.code}'</b> 가이드 학습에<br>반영 대기로 저장되었습니다.</div>
   </div>`:''}
@@ -2172,12 +2172,12 @@ function renderRoute(scope){
   mapEl.innerHTML=
     order.map((v,i)=>`<div class="pin" style="left:${v.x}%;top:${v.y}%;animation:revUp .45s var(--spring) both;animation-delay:${i*.05}s">
       <div class="p" style="background:${i===0?'var(--grad-mint)':'linear-gradient(135deg,#2E7BF6,#25C56A)'}"><b>${i+1}</b></div></div>`).join('')
-    +`<svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1" viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="${order.map(v=>`${v.x},${v.y}`).join(' ')}" fill="none" stroke="rgba(34,197,140,.55)" stroke-width="0.9" stroke-dasharray="2 2" style="stroke-dashoffset:200;animation:draw 1.2s .1s forwards"/></svg>`
+    +`<svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1" viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="${order.map(v=>`${v.x},${v.y}`).join(' ')}" fill="none" stroke="rgba(0,191,165,.55)" stroke-width="0.9" stroke-dasharray="2 2" style="stroke-dashoffset:200;animation:draw 1.2s .1s forwards"/></svg>`
     +`<div style="position:absolute;left:14px;top:14px;z-index:4" class="chip on tiny">${ic('pin',12)} 현재 위치 기준 · 가까운 순</div>`;
   scope.querySelector('#routeCount').textContent=order.length+'곳';
   const listEl=scope.querySelector('#routeList');
   listEl.innerHTML=order.map((v,i)=>`
-    <div class="card rrow" data-idx="${i}" data-voc="${v.id}" style="cursor:pointer;margin-bottom:11px;display:flex;gap:11px;align-items:center;${i===0?'border-color:rgba(34,197,140,.4)':''}">
+    <div class="card rrow" data-idx="${i}" data-voc="${v.id}" style="cursor:pointer;margin-bottom:11px;display:flex;gap:11px;align-items:center;${i===0?'border-color:rgba(0,191,165,.4)':''}">
       <div class="grip" draggable="true" data-idx="${i}">${ic('grip',20)}</div>
       <div style="width:32px;height:32px;border-radius:10px;background:${i===0?'var(--grad-mint)':'var(--surface3)'};color:${i===0?'#04121a':'var(--muted)'};display:grid;place-items:center;font-weight:800;flex:none">${i+1}</div>
       <div style="flex:1;min-width:0">
@@ -2450,7 +2450,7 @@ function bindScreen(el,name,params){
     steps.forEach(s=>s.onclick=()=>{
       const i=+s.dataset.step;const sn=s.querySelector('.snum');
       if(done.has(i)){done.delete(i);sn.style.background='var(--surface3)';sn.style.color='var(--muted)';sn.textContent=i+1;s.style.borderColor='var(--line)';}
-      else{done.add(i);sn.style.background='var(--grad-mint)';sn.style.color='#04121a';sn.innerHTML=ic('check',16,3.2);s.style.borderColor='rgba(34,197,140,.4)';haptic(s);}
+      else{done.add(i);sn.style.background='var(--grad-mint)';sn.style.color='#04121a';sn.innerHTML=ic('check',16,3.2);s.style.borderColor='rgba(0,191,165,.4)';haptic(s);}
     });
     el.querySelectorAll('[data-reguide]').forEach(n=>n.onclick=()=>back());
     btn.onclick=()=>{STATE[params.id].actionDone=true;STATE[params.id].result='';push('result',{id:params.id});};
