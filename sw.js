@@ -1,10 +1,10 @@
 /* 에스원 Answer — Service Worker (오프라인/설치형 PWA) */
-const CACHE = 'answer-v4';
+const CACHE = 'answer-v5';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './logo.gif',
+  './logo-clean.png',
   './icon-192.png',
   './icon-512.png',
   './icon-512-maskable.png',
