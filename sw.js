@@ -1,11 +1,11 @@
 /* 에스원 Answer — Service Worker
    HTML은 네트워크 우선(항상 최신), 정적 자산은 캐시 우선 + 오프라인 폴백 */
-const CACHE = 'answer-v9';
+const CACHE = 'answer-v10';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './logo-clean.png',
+  './logo.png',
   './icon-192.png',
   './icon-512.png',
   './icon-512-maskable.png',
