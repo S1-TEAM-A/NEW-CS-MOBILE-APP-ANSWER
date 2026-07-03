@@ -1,5 +1,5 @@
 /* 에스원 Answer — Service Worker (오프라인/설치형 PWA) */
-const CACHE = 'answer-v3';
+const CACHE = 'answer-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS = [
   './logo.gif',
   './icon-192.png',
   './icon-512.png',
+  './icon-512-maskable.png',
   './apple-touch-icon.png',
   './favicon.png'
 ];
