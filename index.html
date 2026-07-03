@@ -266,10 +266,7 @@ textarea,input{font-family:inherit;}
 
 /* 무한대(∞) 브랜드 로고 — 빛이 계속 흐름 */
 .logoTile{width:92px;height:92px;border-radius:26px;background:#fff;display:grid;place-items:center;margin:0 auto;box-shadow:0 22px 55px -12px rgba(46,123,246,.5),0 0 0 1px rgba(255,255,255,.08);animation:tileFloat 4.8s ease-in-out infinite;}
-.brandLogo{width:200px;max-width:66%;height:auto;display:block;margin:0 auto;overflow:visible;animation:tileFloat 4.8s ease-in-out infinite;}
-.brandLogo .flow{animation:brandFlow 2.6s linear infinite;}
-@keyframes brandFlow{to{stroke-dashoffset:-100;}}
-.brandMini{width:34px;height:22px;overflow:visible;flex:none;}
+.logoImg{width:190px;max-width:64%;height:auto;display:block;margin:0 auto;animation:tileFloat 4.8s ease-in-out infinite;filter:drop-shadow(0 18px 40px rgba(46,123,246,.4));}
 @keyframes tileFloat{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-10px) rotate(-1.5deg);}}
 .inf{width:56px;height:36px;overflow:visible;}
 .inf .base{fill:none;stroke:url(#infg);stroke-width:9.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 5px rgba(46,123,246,.3));}
@@ -1648,12 +1645,7 @@ const VIEWS={};
 VIEWS.login=()=>`
 <div class="scroll" style="display:flex;flex-direction:column;justify-content:center;padding:0 30px;text-align:center;">
   <div class="reveal" style="animation-delay:.05s;margin-bottom:18px">
-    <svg class="brandLogo" viewBox="0 0 200 130" fill="none" aria-label="에스원 Answer">
-      <g filter="url(#brandShadow)">
-        <path pathLength="100" d="M100 65 C100 25 40 25 40 65 C40 105 100 105 100 65 C100 25 160 25 160 65 C160 105 100 105 100 65 Z" stroke="url(#infg)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-      </g>
-      <path class="flow" pathLength="100" d="M100 65 C100 25 40 25 40 65 C40 105 100 105 100 65 C100 25 160 25 160 65 C160 105 100 105 100 65 Z" stroke="#EAFEFF" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15 85" opacity=".9"/>
-    </svg>
+    <img src="logo-clean.png" alt="에스원 Answer" class="logoImg" />
   </div>
   <div class="reveal" style="animation-delay:.12s">
     <div style="font-size:36px;font-weight:850;letter-spacing:-.02em;margin-bottom:12px">에스원 <span class="numg" style="font-weight:900">Answer</span></div>
@@ -1684,7 +1676,7 @@ VIEWS.home=()=>{
   return `
 <div class="scroll">
   <div style="display:flex;align-items:center;gap:7px;padding:14px 20px 0">
-    <svg class="brandMini" viewBox="0 0 200 130" fill="none" aria-hidden="true"><path pathLength="100" d="M100 65 C100 25 40 25 40 65 C40 105 100 105 100 65 C100 25 160 25 160 65 C160 105 100 105 100 65 Z" stroke="url(#infg2)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <img src="logo-clean.png" alt="" style="width:34px;height:34px;object-fit:contain;flex:none" />
     <span style="font-weight:800;font-size:27px;letter-spacing:-.01em">에스원 <span class="numg" style="font-weight:900">Answer</span></span>
   </div>
   <div class="hdr" style="padding-top:8px">
