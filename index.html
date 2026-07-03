@@ -1,0 +1,2502 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#070B16" />
+<title>에스원 Answer — 현장 CS 앱</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+/* =========================================================
+   OnSite CS — Design System
+   보안장비 VOC 현장조치 앱 (프로토타입)
+   ========================================================= */
+:root{
+  --bg:#070B16;
+  --bg2:#0A1120;
+  --surface:#111A2E;
+  --surface2:#17223B;
+  --surface3:#1E2B48;
+  --line:rgba(140,160,210,.12);
+  --line2:rgba(140,160,210,.22);
+  --text:#EDF2FF;
+  --muted:#93A2C6;
+  --muted2:#66759B;
+  --primary:#22D3AE;
+  --primary2:#2E8BF6;
+  --violet:#2E8BF6;
+  --violet2:#5AA6FF;
+  --danger:#FF5B72;
+  --warn:#FFB020;
+  --ok:#25C56A;
+  --blue:#2E8BF6;
+  --grad:linear-gradient(135deg,#2E7BF6 0%,#1FC6C0 52%,#25C56A 100%);
+  --grad-mint:linear-gradient(135deg,#17C9C0 0%,#28C56A 100%);
+  --grad-danger:linear-gradient(135deg,#FF6B7E 0%,#FF3D6B 100%);
+  --radius:22px;
+  --radius-s:14px;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.65);
+  --shadow-glow:0 10px 40px -8px rgba(34,197,140,.4);
+  --spring:cubic-bezier(.22,1,.36,1);
+  --spring2:cubic-bezier(.34,1.56,.64,1);
+  --ease:cubic-bezier(.4,0,.2,1);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Malgun Gothic',sans-serif;
+  background:
+     radial-gradient(1200px 700px at 80% -10%, rgba(76,141,255,.10), transparent 60%),
+     radial-gradient(900px 600px at -10% 20%, rgba(46,123,246,.10), transparent 55%),
+     var(--bg);
+  color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+  min-height:100dvh;
+  overflow:hidden;
+  letter-spacing:-.01em;
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+textarea,input,button{word-break:keep-all;overflow-wrap:break-word;}
+/* ---------- Device frame ---------- */
+.stage{width:100%;height:100dvh;display:flex;align-items:center;justify-content:center;padding:22px;}
+.phone{
+  position:relative;width:400px;max-width:100%;height:min(860px,96dvh);
+  background:var(--bg);
+  border-radius:46px;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8), 0 0 0 11px #0b0f1a, 0 0 0 12.5px #1b2438, inset 0 0 0 1px rgba(255,255,255,.04);
+  overflow:hidden;
+  isolation:isolate;
+}
+@media (max-width:460px){
+  .stage{padding:0;}
+  .phone{width:100%;height:100dvh;border-radius:0;box-shadow:none;}
+}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:30px;background:#05070d;border-radius:0 0 20px 20px;z-index:60;pointer-events:none;}
+@media (max-width:460px){.notch{display:none;}}
+
+/* ---------- App shell ---------- */
+.app{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;background:transparent;z-index:1;}
+.statusbar{height:calc(24px + var(--safe-top));padding:0 26px;display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:4px;font-size:13px;font-weight:600;color:var(--text);z-index:55;flex:none;}
+@media (max-width:460px){.statusbar{height:calc(30px + var(--safe-top));}}
+.statusbar .dots{display:flex;gap:5px;align-items:center;}
+.statusbar .dots svg{opacity:.9}
+
+/* screen stack */
+.screens{position:relative;flex:1;overflow:hidden;}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;will-change:transform,opacity;
+  background:
+    radial-gradient(850px 480px at 12% -6%, rgba(46,123,246,.15), transparent 58%),
+    radial-gradient(760px 480px at 92% 106%, rgba(37,197,106,.13), transparent 58%),
+    var(--bg);}
+.screen::before{content:"";position:absolute;top:34%;left:-14%;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(31,198,192,.20),transparent 70%);filter:blur(55px);z-index:0;pointer-events:none;animation:orbA 17s ease-in-out infinite;}
+.screen>*{position:relative;z-index:1;}
+.screen .scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:28px;scrollbar-width:none;}
+.screen .scroll::-webkit-scrollbar{display:none;}
+
+/* transitions */
+.scr-in-push{animation:pushIn .42s var(--spring) both;}
+.scr-out-push{animation:pushOut .42s var(--spring) both;}
+.scr-in-pop{animation:popScrIn .40s var(--spring) both;}
+.scr-out-pop{animation:popScrOut .40s var(--spring) both;}
+.scr-fade{animation:fadeUp .45s var(--spring) both;}
+@keyframes pushIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+@keyframes pushOut{from{transform:translateX(0);opacity:1;}to{transform:translateX(-24%);opacity:.4;}}
+@keyframes popScrIn{from{transform:translateX(-24%);opacity:.4;}to{transform:translateX(0);opacity:1;}}
+@keyframes popScrOut{from{transform:translateX(0);}to{transform:translateX(100%);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px) scale(.99);}to{opacity:1;transform:none;}}
+
+/* ---------- Header ---------- */
+.hdr{display:flex;align-items:center;gap:12px;padding:8px 20px 12px;flex:none;}
+.hdr .back{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--text);cursor:pointer;transition:transform .15s var(--spring2);}
+.hdr .back:active{transform:scale(.9);}
+.hdr h1{font-size:19px;font-weight:800;margin:0;flex:1;letter-spacing:-.02em;}
+.hdr .sub{font-size:12px;color:var(--muted);font-weight:600;}
+
+/* ---------- Typography helpers ---------- */
+.eyebrow{font-size:12px;font-weight:700;color:var(--primary);letter-spacing:.04em;text-transform:uppercase;}
+.big{font-size:30px;font-weight:850;letter-spacing:-.03em;line-height:1.1;}
+.muted{color:var(--muted);}
+.tiny{font-size:11.5px;}
+.section-t{font-size:13px;font-weight:700;color:var(--muted);margin:22px 20px 10px;letter-spacing:.01em;}
+
+/* ---------- Card ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;}
+.card.g{background:linear-gradient(160deg,rgba(30,43,72,.9),rgba(17,26,46,.9));}
+.reveal{opacity:0;transform:translateY(16px);animation:revUp .6s var(--spring) forwards;}
+@keyframes revUp{to{opacity:1;transform:none;}}
+
+/* ---------- Chips & badges ---------- */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:700;background:var(--surface2);border:1px solid var(--line);color:var(--muted);}
+.chip.on{background:rgba(34,197,140,.14);border-color:rgba(34,197,140,.4);color:var(--primary);}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:9px;font-size:11.5px;font-weight:800;letter-spacing:.01em;}
+.b-high{background:rgba(255,91,114,.16);color:#FF8494;}
+.b-mid{background:rgba(255,176,32,.15);color:#FFC24D;}
+.b-low{background:rgba(76,141,255,.15);color:#84AEFF;}
+.b-done{background:rgba(45,212,191,.15);color:#5BE3CE;}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;}
+
+/* ---------- Buttons ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:16px;border:none;font-size:15.5px;font-weight:800;cursor:pointer;color:#04121a;background:var(--grad-mint);box-shadow:var(--shadow-glow);transition:transform .16s var(--spring2),box-shadow .2s;letter-spacing:-.01em;font-family:inherit;}
+.btn:active{transform:scale(.965);}
+.btn.grad{background:var(--grad);color:#fff;box-shadow:0 10px 34px -10px rgba(76,141,255,.6);}
+.btn.ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line2);box-shadow:none;}
+.btn.danger{background:var(--grad-danger);color:#fff;box-shadow:0 10px 30px -10px rgba(255,61,107,.5);}
+.btn.sm{padding:11px 14px;font-size:13.5px;border-radius:13px;width:auto;box-shadow:none;}
+.btn[disabled]{opacity:.4;pointer-events:none;filter:grayscale(.3);}
+.iconbtn{display:grid;place-items:center;gap:6px;flex:1;padding:14px 8px;border-radius:16px;background:var(--surface2);border:1px solid var(--line);color:var(--text);cursor:pointer;font-size:12px;font-weight:700;transition:transform .15s var(--spring2),background .2s;}
+.iconbtn:active{transform:scale(.94);}
+.iconbtn .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;margin-bottom:2px;}
+
+/* ---------- Sticky bottom action ---------- */
+.dock{flex:none;padding:14px 20px calc(16px + var(--safe-bottom));background:linear-gradient(to top,var(--bg) 60%,transparent);z-index:40;}
+
+/* ---------- Bottom tab ---------- */
+.tabbar{flex:none;display:flex;padding:8px 10px calc(10px + var(--safe-bottom));background:rgba(10,17,32,.85);backdrop-filter:blur(20px);border-top:1px solid var(--line);position:relative;z-index:40;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;color:var(--muted2);cursor:pointer;font-size:10.5px;font-weight:700;transition:color .2s;position:relative;}
+.tab.on{color:var(--primary);}
+.tab .ti{transition:transform .3s var(--spring2);}
+.tab.on .ti{transform:translateY(-2px);}
+.tab .badge-n{position:absolute;top:0;right:calc(50% - 22px);background:var(--danger);color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:9px;display:grid;place-items:center;padding:0 4px;}
+
+/* ---------- List rows ---------- */
+.row{display:flex;align-items:center;gap:13px;padding:15px 0;border-bottom:1px solid var(--line);}
+.row:last-child{border-bottom:none;}
+.avatar{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-weight:800;font-size:15px;flex:none;background:var(--surface3);color:var(--primary);}
+
+/* ---------- Skeleton ---------- */
+.skel{position:relative;overflow:hidden;background:var(--surface2);border-radius:12px;}
+.skel::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:shimmer 1.3s infinite;}
+@keyframes shimmer{100%{transform:translateX(100%);}}
+
+/* ---------- Progress / stepper ---------- */
+.track{height:6px;border-radius:6px;background:var(--surface2);overflow:hidden;}
+.track > i{display:block;height:100%;border-radius:6px;background:var(--grad-mint);transition:width .6s var(--spring);}
+.steps{display:flex;gap:6px;}
+.steps > i{flex:1;height:5px;border-radius:5px;background:var(--surface2);transition:background .4s;}
+.steps > i.on{background:var(--grad-mint);}
+
+/* ---------- Toggle switch ---------- */
+.sw{width:50px;height:30px;border-radius:20px;background:var(--surface3);position:relative;cursor:pointer;transition:background .3s;flex:none;border:1px solid var(--line);}
+.sw.on{background:linear-gradient(135deg,#2FE3C6,#22D3EE);border-color:transparent;}
+.sw i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .32s var(--spring2);box-shadow:0 2px 6px rgba(0,0,0,.3);}
+.sw.on i{transform:translateX(20px);}
+
+/* ---------- Bottom sheet ---------- */
+.scrim{position:absolute;inset:0;background:rgba(3,6,14,.6);backdrop-filter:blur(3px);z-index:70;opacity:0;transition:opacity .3s;pointer-events:none;}
+.scrim.show{opacity:1;pointer-events:auto;}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:28px 28px 0 0;z-index:71;transform:translateY(110%);transition:transform .44s var(--spring);padding:10px 20px calc(24px + var(--safe-bottom));border-top:1px solid var(--line2);max-height:88%;overflow-y:auto;scrollbar-width:none;pointer-events:none;}
+.sheet::-webkit-scrollbar{display:none;}
+.sheet.show{transform:translateY(0);pointer-events:auto;}
+.grab{width:42px;height:5px;border-radius:5px;background:var(--line2);margin:6px auto 14px;}
+
+/* ---------- Voice waveform ---------- */
+.wave{display:flex;align-items:center;justify-content:center;gap:4px;height:70px;}
+.wave i{width:5px;border-radius:5px;background:var(--grad-mint);animation:wv 1s ease-in-out infinite;}
+@keyframes wv{0%,100%{height:12px;}50%{height:52px;}}
+.mic{width:88px;height:88px;border-radius:50%;background:var(--grad-mint);display:grid;place-items:center;margin:6px auto;box-shadow:0 0 0 0 rgba(34,197,140,.5);animation:micpulse 1.6s infinite;}
+@keyframes micpulse{0%{box-shadow:0 0 0 0 rgba(34,197,140,.45);}70%{box-shadow:0 0 0 26px rgba(34,197,140,0);}100%{box-shadow:0 0 0 0 rgba(34,197,140,0);}}
+
+/* ---------- Checklist ---------- */
+.check{display:flex;align-items:flex-start;gap:13px;padding:15px;border-radius:16px;background:var(--surface2);border:1.5px solid var(--line);cursor:pointer;transition:border-color .25s,background .25s,transform .12s var(--spring2);margin-bottom:10px;}
+.check:active{transform:scale(.985);}
+.check.sel{border-color:var(--primary);background:rgba(34,197,140,.08);}
+.check .box{width:26px;height:26px;border-radius:9px;border:2px solid var(--line2);flex:none;display:grid;place-items:center;transition:.25s;margin-top:1px;}
+.check.sel .box{background:var(--grad-mint);border-color:transparent;}
+.check .box svg{opacity:0;transform:scale(.4);transition:.3s var(--spring2);}
+.check.sel .box svg{opacity:1;transform:scale(1);}
+
+/* ---------- Toast ---------- */
+.toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:rgba(20,30,52,.96);border:1px solid var(--line2);color:var(--text);padding:13px 18px;border-radius:15px;font-size:13.5px;font-weight:700;z-index:90;opacity:0;transition:.35s var(--spring);box-shadow:var(--shadow);display:flex;align-items:center;gap:9px;pointer-events:none;white-space:nowrap;word-break:keep-all;max-width:92%;line-height:1.4;}
+.toast br{display:block;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ---------- Success burst ---------- */
+.burst{width:110px;height:110px;border-radius:50%;background:var(--grad-mint);display:grid;place-items:center;margin:20px auto;position:relative;animation:pop .55s var(--spring2) both;box-shadow:0 0 60px -6px rgba(34,197,140,.6);}
+@keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+.burst svg path{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .5s .25s forwards var(--ease);}
+@keyframes draw{to{stroke-dashoffset:0;}}
+.ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--primary);animation:ringout 1s .2s ease-out forwards;}
+@keyframes ringout{to{transform:scale(1.7);opacity:0;}}
+
+/* map */
+.map{position:relative;height:250px;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(120% 120% at 50% 0,#12203a,#0b1220);}
+.pin{position:absolute;transform:translate(-50%,-100%);z-index:3;}
+.pin .p{width:30px;height:30px;border-radius:50% 50% 50% 2px;transform:rotate(45deg);display:grid;place-items:center;box-shadow:0 6px 14px rgba(0,0,0,.5);}
+.pin .p b{transform:rotate(-45deg);color:#04121a;font-weight:800;font-size:13px;}
+
+.expand{max-height:0;overflow:hidden;transition:max-height .45s var(--spring);}
+.expand.open{max-height:600px;}
+
+.fadein{animation:fadeUp .5s var(--spring) both;}
+.stagger>*{opacity:0;transform:translateY(14px);animation:revUp .55s var(--spring) forwards;}
+
+.numg{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.numm{background:var(--grad-mint);-webkit-background-clip:text;background-clip:text;color:transparent;}
+hr.sep{border:none;border-top:1px solid var(--line);margin:14px 0;}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-size:13.5px;border-bottom:1px solid var(--line);}
+.kv:last-child{border-bottom:none;}
+.kv .k{color:var(--muted);font-weight:600;flex:none;}
+.kv .v{text-align:right;font-weight:700;}
+.pill-tabs{display:flex;gap:7px;padding:2px;background:var(--surface2);border-radius:14px;border:1px solid var(--line);}
+.pill-tabs button{flex:1;padding:9px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:13px;border-radius:11px;cursor:pointer;transition:.25s;font-family:inherit;}
+.pill-tabs button.on{background:var(--surface3);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.25);}
+textarea,input{font-family:inherit;}
+.ta{width:100%;background:var(--surface2);border:1.5px solid var(--line2);border-radius:16px;padding:15px;color:var(--text);font-size:14.5px;line-height:1.55;resize:none;outline:none;transition:border-color .2s;}
+.ta:focus{border-color:var(--primary);}
+
+/* ============ 항상 살아있는 모션 ============ */
+/* 배경 앰비언트 오브 (블루·그린이 계속 부유) */
+.orb{position:absolute;border-radius:50%;filter:blur(64px);z-index:0;pointer-events:none;opacity:.55;}
+.orb1{width:340px;height:340px;background:radial-gradient(circle,rgba(46,123,246,.6),transparent 70%);top:-70px;left:-90px;animation:orbA 15s ease-in-out infinite;}
+.orb2{width:320px;height:320px;background:radial-gradient(circle,rgba(37,197,106,.52),transparent 70%);bottom:-50px;right:-80px;animation:orbB 18s ease-in-out infinite;}
+.orb3{width:240px;height:240px;background:radial-gradient(circle,rgba(31,198,192,.4),transparent 70%);top:42%;left:56%;animation:orbA 21s ease-in-out infinite reverse;}
+@keyframes orbA{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(46px,64px) scale(1.16);}}
+@keyframes orbB{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-54px,-46px) scale(1.12);}}
+
+/* 무한대(∞) 브랜드 로고 — 빛이 계속 흐름 */
+.logoTile{width:92px;height:92px;border-radius:26px;background:#fff;display:grid;place-items:center;margin:0 auto;box-shadow:0 22px 55px -12px rgba(46,123,246,.5),0 0 0 1px rgba(255,255,255,.08);animation:tileFloat 4.8s ease-in-out infinite;}
+@keyframes tileFloat{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-10px) rotate(-1.5deg);}}
+.inf{width:56px;height:36px;overflow:visible;}
+.inf .base{fill:none;stroke:url(#infg);stroke-width:9.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 5px rgba(46,123,246,.3));}
+.inf .flow{fill:none;stroke:#fff;stroke-width:9.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22 168;stroke-dashoffset:0;opacity:.85;animation:infFlow 2.6s linear infinite;}
+@keyframes infFlow{to{stroke-dashoffset:-190;}}
+.infMini{width:26px;height:18px;overflow:visible;}
+.infMini path{fill:none;stroke:url(#infg2);stroke-width:12;stroke-linecap:round;stroke-linejoin:round;}
+
+/* 주요 CTA에 광택이 계속 스쳐 지나감 */
+.btn.shine{position:relative;overflow:hidden;}
+.btn.shine::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-18deg);animation:sheen 3.4s ease-in-out infinite;}
+@keyframes sheen{0%{left:-70%;}55%,100%{left:150%;}}
+
+/* ============ 길찾기 · 내비게이션 ============ */
+.navmap{position:absolute;inset:0;width:100%;height:100%;z-index:0;}
+.route-line{stroke:#25C56A;stroke-width:4.5;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(37,197,106,.8));stroke-dasharray:100;stroke-dashoffset:100;animation:routeDraw 1.5s .15s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes routeDraw{to{stroke-dashoffset:0;}}
+.route-flow{stroke:#EAFFF5;stroke-width:4.5;fill:none;stroke-linecap:round;stroke-dasharray:5 95;stroke-dashoffset:0;opacity:.95;animation:flowDash 2.6s linear infinite;}
+@keyframes flowDash{to{stroke-dashoffset:-100;}}
+.glass{background:rgba(15,23,42,.82);backdrop-filter:blur(12px);border:1px solid var(--line2);}
+/* 동선 드래그 재정렬 */
+.rrow{transition:border-color .2s,transform .16s var(--spring),opacity .2s;}
+.rrow.dragging{opacity:.35;}
+.rrow.over{border-color:var(--primary)!important;transform:scale(1.015);box-shadow:0 8px 24px -10px rgba(34,197,140,.5);}
+.grip{cursor:grab;color:var(--muted2);flex:none;padding:2px;display:grid;place-items:center;stroke-width:2.6;}
+.grip:active{cursor:grabbing;color:var(--primary);}
+/* 조치 원인별 완료 체크 */
+.cdone{color:rgba(140,160,210,.25);}
+.gcause.done{border-color:rgba(34,197,140,.45);}
+.gcause.done .cdone{background:var(--grad-mint);border-color:transparent;color:#04121a;}
+/* AI 분석 중 인터스티셜 */
+.aiov{position:absolute;inset:0;z-index:82;background:rgba(7,11,22,.78);backdrop-filter:blur(9px);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none;padding:0 44px;}
+.aiov.show{opacity:1;pointer-events:auto;}
+.aiov-orb{width:96px;height:96px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;position:relative;box-shadow:0 0 55px -6px rgba(46,123,246,.65);animation:aiPulse 1.4s ease-in-out infinite;}
+@keyframes aiPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.09);}}
+.aiov-orb::before,.aiov-orb::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(47,227,198,.55);animation:aiRing 1.9s ease-out infinite;}
+.aiov-orb::after{animation-delay:.95s;}
+@keyframes aiRing{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.65);opacity:0;}}
+.aiov-title{font-weight:850;font-size:19px;margin-top:24px;letter-spacing:-.02em;}
+.aiov-sub{color:var(--muted);font-size:12.5px;margin-top:6px;}
+.aiov-steps{margin-top:22px;width:100%;max-width:280px;}
+.aiov-step{display:flex;align-items:center;gap:11px;padding:7px 0;opacity:.3;transform:translateX(-6px);transition:opacity .35s var(--spring),transform .35s var(--spring);}
+.aiov-step.on{opacity:1;transform:none;}
+.aiov-ic{width:20px;height:20px;flex:none;display:grid;place-items:center;color:var(--primary);}
+.aiov-spin{width:15px;height:15px;border-radius:50%;border:2px solid var(--line2);border-top-color:var(--primary);animation:aiSpin .7s linear infinite;}
+@keyframes aiSpin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone">
+    <div class="notch"></div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+      <linearGradient id="infg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E7BF6"/><stop offset=".55" stop-color="#1FC6C0"/><stop offset="1" stop-color="#25C56A"/></linearGradient>
+      <linearGradient id="infg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E7BF6"/><stop offset="1" stop-color="#25C56A"/></linearGradient>
+    </defs></svg>
+    <div class="app">
+      <div class="statusbar">
+        <span id="clock">9:41</span>
+        <span class="dots">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="4.5" y="4.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="9" y="2" width="3" height="9" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="currentColor" opacity=".4"/></svg>
+          <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 2.2C10 2.2 11.8 3 13.1 4.3l1.4-1.4C12.8 1.2 10.5.3 8 .3S3.2 1.2 1.5 2.9l1.4 1.4C4.2 3 6 2.2 8 2.2z" fill="currentColor"/><path d="M8 6c1 0 1.9.4 2.6 1.1l1.4-1.4C10.9 4.6 9.5 4 8 4s-2.9.6-4 1.7l1.4 1.4C6.1 6.4 7 6 8 6z" fill="currentColor"/><circle cx="8" cy="9.4" r="1.4" fill="currentColor"/></svg>
+          <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="17" height="8" rx="1.5" fill="currentColor"/><rect x="23" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+        </span>
+      </div>
+      <div class="screens" id="screens"></div>
+      <div id="tabbar"></div>
+    </div>
+    <div class="scrim" id="scrim"></div>
+    <div class="sheet" id="sheet"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   DATA — 실제 VOC_수정.xlsx 백데이터 기반
+   ========================================================= */
+const GUIDE = {
+ "030130": {
+  "code": "030130",
+  "name": "[영상이상]PC에서 일부 안보임",
+  "items": [
+   {
+    "d": "PC뷰어 프로그램 실행 이상",
+    "a": "PC 뷰어를 재설치 한다",
+    "r": "뷰어 프로그램 재설치로 복구"
+   },
+   {
+    "d": "뷰어 프로그램에서 영상이 일부 안나옴",
+    "a": "PC 뷰어를 재설치 한다",
+    "r": "뷰어 프로그램 재설치로 복구"
+   },
+   {
+    "d": "뷰어 프로그램에서 영상이 일부 안나옴",
+    "a": "PC 뷰어 감시 화면에서 녹화기를 다시 드래그 하여 카메라를 재실행 해본다",
+    "r": "PC뷰어 감시 화면 녹화기 드래그하여 정상 복구하였습니다."
+   },
+   {
+    "d": "뷰어 프로그램에서 영상이 일부 안나옴",
+    "a": "카메라 등록/삭제를 실행하여 정보 갱신 및 재등록한다",
+    "r": "카메라 재등록 후 복구"
+   },
+   {
+    "d": "해당 카메라 전원(아답터) 연결 상태 및 출력 상태 불량",
+    "a": "카메라 전원 출력을 확인한다",
+    "r": "카메라 아답터 불량으로 아답터 교체 복구"
+   },
+   {
+    "d": "해당 카메라 전원(아답터) 연결 상태 및 출력 상태 불량",
+    "a": "선로테스터기를 활용 UTP 케이블 연결 상태를 확인한다",
+    "r": "UTP 케이블 연결 상태 불량으로 공사 의뢰 협의"
+   },
+   {
+    "d": "해당 카메라와 녹화기 본체간 선로 연결 상태 불량",
+    "a": "선로테스터기를 활용 UTP 케이블 연결 상태를 확인한다",
+    "r": "UTP 케이블 연결 상태 불량으로 공사 의뢰 협의"
+   },
+   {
+    "d": "해당 없음",
+    "a": "카메라 교체 필요",
+    "r": "조치사항 확인 결과 이상 없어 카메라 불량으로 판단, 카메라 교체 안내"
+   }
+  ],
+  "device": "PC뷰어 · 카메라"
+ },
+ "030134": {
+  "code": "030134",
+  "name": "[기기점검]본체점검",
+  "items": [
+   {
+    "d": "본체에서 이상한 소리 발생",
+    "a": "자가진단을 실행, 장애 발생 항목 확인한다",
+    "r": "자가진단 결과 HDD 장애로 HDD 교체 안내"
+   },
+   {
+    "d": "본체에서 이상한 소리 발생",
+    "a": "영상화면에서 움직임 감지시 영상 저장 아이콘 확인한다",
+    "r": "움직임 감지 시 영상저장 아이콘 확인 안되어 HDD 교체 안내"
+   },
+   {
+    "d": "카메라 전원(아답터) 연결 상태 및 출력 상태 불량",
+    "a": "카메라 전원(아답터) 출력을 확인한다",
+    "r": "카메라 연결 상태 불량(아답터 불량), 아답터 교체 복구"
+   },
+   {
+    "d": "카메라와 녹화기 본체간 선로 연결 상태 불량",
+    "a": "선로테스터기를 활용 UTP 케이블 연결 상태를 확인한다",
+    "r": "카메라 연결 상태 불량(선로 불량)으로 해당 카메라 등록 삭제 및 재배선 공사 협의"
+   },
+   {
+    "d": "FAN 주변 상태는 불량(먼지, 오염 등)",
+    "a": "FAN 주변 먼지, 오염물 등 제거한다",
+    "r": "FAN 주변 먼지 제거로 복구, 상황 지켜보고 문제 재발 시 VOC 재접수 안내드림"
+   },
+   {
+    "d": "움직임 감지시 영상 저장 아이콘 미작동",
+    "a": "자가진단을 실행, 장애 발생 항목 확인한다",
+    "r": "움직임 감지 시 영상저장 아이콘 확인 안되어 HDD 교체 안내"
+   },
+   {
+    "d": "해당 없음",
+    "a": "본체 교체 필요",
+    "r": "모든 조치사항 확인 결과 이상 없어 본체 교체  안내"
+   }
+  ],
+  "device": "녹화기(NVR)"
+ },
+ "030133": {
+  "code": "030133",
+  "name": "[기기점검]카메라 점검",
+  "items": [
+   {
+    "d": "해당 카메라 전원(아답터) 연결 상태 및 출력 상태 불량",
+    "a": "카메라 아답터 출력 전원 확인한다",
+    "r": "카메라 아답터 불량으로 아답터 교체 복구"
+   },
+   {
+    "d": "해당 카메라와 본체간 선로 연결 상태 불량",
+    "a": "선로테스터기를 활용 UTP/동축 케이블 확인 한다",
+    "r": "UTP 케이블 연결 상태 불량으로 공사 의뢰 협의"
+   },
+   {
+    "d": "해당 카메라와 본체간 선로 연결 상태 불량",
+    "a": "선로테스터기를 활용 UTP/동축 케이블 확인 한다",
+    "r": "UTP 케이블 연결 상태 불량으로 선로 교체 복구"
+   },
+   {
+    "d": "카메라에 영향을 줄 수 있는 LED, 조명 등 존재",
+    "a": "해당 카메라 셔터 속도 설정 값을 조정한다",
+    "r": "카메라 셔터 속도 설정 조정 완료"
+   },
+   {
+    "d": "카메라 렌즈 상태 불량(오염, 스크래치 등)",
+    "a": "카메라 렌즈 부분을 청소한다",
+    "r": "카메라 렌즈 부분 오염물질 제거"
+   },
+   {
+    "d": "해당 없음",
+    "a": "카메라 교체 필요",
+    "r": "조치사항 확인 결과 이상 없어 카메라 불량으로 판단, 카메라 교체 안내"
+   }
+  ],
+  "device": "CCTV 카메라"
+ },
+ "030144": {
+  "code": "030144",
+  "name": "[영상이상]모바일에서 전체 안보임",
+  "items": [
+   {
+    "d": "모두앱 영상 접속 권한 부여 대상 아님",
+    "a": "모두앱 영상접속 권한여부를 부여한다(키맨 동의 필요)",
+    "r": "모두앱 영상접속 권한부여로 복구"
+   },
+   {
+    "d": "모두앱 카메라 숨김 설정",
+    "a": "모두앱 녹화기 설정 → 카메라 숨김 설정 해제한다",
+    "r": "모두앱 카메라 숨김 설정 해제 완료"
+   },
+   {
+    "d": "네트워크 등록 상태 불량",
+    "a": "포트포워딩 설정을 확인한다\n① cmd → ipconfig → 공유기 접속 주소(게이트웨이) 확인\n② 공유기 접속 주소(192.168.0.1 등) 인터넷 창 입력\n③ 관리도구 → 고급설정 → 포트포워딩 설정 확인",
+    "r": "포트포워딩 재실시 복구"
+   },
+   {
+    "d": "서비스모바일 메뉴 DDNS 접속 기기 상태 조회 시 비정상",
+    "a": "포트포워딩 설정을 확인한다\n① cmd → ipconfig → 공유기 접속 주소(게이트웨이) 확인\n② 공유기 접속 주소(192.168.0.1 등) 인터넷 창 입력\n③ 관리도구 → 고급설정 → 포트포워딩 설정 확인",
+    "r": "포트포워딩 재실시 복구"
+   },
+   {
+    "d": "카메라 전원(아답터) 연결 상태 및 출력 상태 불량",
+    "a": "카메라 전원 출력을 확인한다",
+    "r": "카메라 연결 상태 불량(아답터 불량), 아답터 교체 복구"
+   },
+   {
+    "d": "카메라와 녹화기 본체간 선로 연결 상태 불량",
+    "a": "선로테스터기를 활용하여 녹화기 원격 단자(WAN포트)선로 상태를 확인한다",
+    "r": "카메라 연결 상태 불량(선로 불량)으로 해당 카메라 등록 삭제 및 재배선 공사 협의"
+   }
+  ],
+  "device": "모두앱 · 녹화기"
+ },
+ "030138": {
+  "code": "030138",
+  "name": "[기기점검]공유기/허브",
+  "items": [
+   {
+    "d": "공유기 전원 불량",
+    "a": "공유기 연결 구성품은 제대로 연결되어 있는지 확인한다",
+    "r": "어댑터 불량으로 교체 복구"
+   },
+   {
+    "d": "공유기 단자는 작동 불량",
+    "a": "유기 연결 구성품은 제대로 연결되어 있는지 확인한다",
+    "r": "공유기 LAN 선 불량으로 LAN선 교체 복구"
+   },
+   {
+    "d": "공유기를 1단, 2단 사용중",
+    "a": "포트포워딩 설정을 확인한다\n① cmd → ipconfig → 공유기 접속 주소(게이트웨이) 확인\n② 공유기 접속 주소(192.168.0.1 등) 인터넷 창 입력\n③ 관리도구 → 고급설정 → 포트포워딩 설정 확인",
+    "r": "2단 공유기 사용 중으로 포트포워딩 재실시 복구"
+   },
+   {
+    "d": "방화벽 또는 정보보안상품 설정 및 실행 중",
+    "a": "방화벽 또는 정보보안상품 확인 시 고객측 네트워크 담당자에게 문의한다",
+    "r": "고객측 방화벽으로 인한 문제, 네트워크 담당자에게 확인 요청"
+   },
+   {
+    "d": "서비스모바일 메뉴 DDNS 접속 기기 상태 조회 시 비정상",
+    "a": "네트워크 연결 상태 확인한다(ID, P/W 설정값 등)",
+    "r": "네트워크 재설정 복구"
+   },
+   {
+    "d": "서비스모바일 메뉴 DDNS 접속 기기 상태 조회 시 비정상",
+    "a": "포트포워딩 설정을 확인한다\n① cmd → ipconfig → 공유기 접속 주소(게이트웨이) 확인\n② 공유기 접속 주소(192.168.0.1 등) 인터넷 창 입력\n③ 관리도구 → 고급설정 → 포트포워딩 설정 확인",
+    "r": "포트포워딩 재실시 복구"
+   },
+   {
+    "d": "해당 없음",
+    "a": "공유기 교체 필요",
+    "r": "공유기 불량으로 공유기 교체 안내"
+   }
+  ],
+  "device": "공유기 · 허브"
+ },
+ "010100": {
+  "code": "010100",
+  "name": "감지기",
+  "items": [
+   {
+    "d": "리더기 상태창에 \"단선\" 표시",
+    "a": "해당 루프 감지기 선로 점검을 실시한다",
+    "r": "1루프 열선 선로 재배선 복구"
+   },
+   {
+    "d": "리더기 상태창에 \"단선\" 표시",
+    "a": "해당 루프 감지기 선로 점검을 실시한다",
+    "r": "1루프 선로 단선, 공사 협의 예정"
+   },
+   {
+    "d": "리더기 상태창에 \"단선\" 표시",
+    "a": "해당루프 감지기 점검을 실시한다",
+    "r": "2루프 열선감지기 불량으로 교체 복구"
+   },
+   {
+    "d": "리더기 상태창에 \"단락\" 표시",
+    "a": "해당 루프 출입문 상태 확인한다",
+    "r": "1루프 창문 닫음, 취급설명 안내"
+   },
+   {
+    "d": "리더기 상태창에 \"단락\" 표시",
+    "a": "해당루프 감지기 점검을 실시한다",
+    "r": "4루프 셔터감지기 불량으로 교체 복구"
+   },
+   {
+    "d": "감지기 신호 감지 안됨",
+    "a": "해당 루프 감지기 선로 점검을 실시한다",
+    "r": "1루프 선로 단선, 공사 협의 예정"
+   },
+   {
+    "d": "감지기 신호 감지 안됨",
+    "a": "해당루프 감지기 점검을 실시한다",
+    "r": "2루프 열선감지기 불량으로 교체 복구"
+   },
+   {
+    "d": "감지기 신호 감지 안됨",
+    "a": "감지기 및 본체 루핑상태를 확인한다",
+    "r": "일주일 뒤 선로 재배선 변추가 공사 예정"
+   },
+   {
+    "d": "감지기 신호 감지 안됨",
+    "a": "감지기 등록 상태를 확인한다",
+    "r": "감지기 재등록 복구"
+   }
+  ],
+  "device": "감지기"
+ },
+ "010303": {
+  "code": "010303",
+  "name": "지문리더기",
+  "items": [
+   {
+    "d": "지문 인식 상태 불량",
+    "a": "지문 인식부 오염 제거 한다",
+    "r": "지문 인식부분 오염(먼지 등) 제거 완료"
+   },
+   {
+    "d": "지문 인식 상태 불량",
+    "a": "다양한 손가락으로 테스트를 해본다",
+    "r": "특정 고객만 지문인식이 안되어 모바일 카드 발급 권유"
+   },
+   {
+    "d": "지문리더기 액정 상태 불량",
+    "a": "지문리더기를 리셋한다",
+    "r": "리셋 복구"
+   },
+   {
+    "d": "지문리더기 액정 상태 불량",
+    "a": "지문리더기 교체 필요",
+    "r": "지문리더기 교체 일정 안내"
+   }
+  ],
+  "device": "지문리더기"
+ }
+};
+
+const USER = {name:"김현장", team:"강남광역지사 · 서비스팀", role:"신입 (3개월차)", seniorMode:false, aiDefault:true};
+
+const VOCS = [
+ {
+  "id": "V-26061001",
+  "vocNo": "N3732910",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "가온식당",
+  "industry": "상점",
+  "addr": "서울 강남구 테헤란로 108",
+  "short": "테헤란로 45",
+  "x": 59,
+  "y": 57,
+  "phone": "010-2639-8430",
+  "contact": "김정록 담당자",
+  "symptom": "녹화가 안 되고 있다는 알림이 떠서 확인 부탁드립니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "강남지사-기술",
+  "worker": "한서연",
+  "urgency": "low",
+  "sla": 2,
+  "status": "done",
+  "repeat": 0,
+  "reserve": "—",
+  "eta": 28,
+  "dist": 18.3,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.02.20",
+    "t": "카메라 재등록"
+   }
+  ],
+  "done": true,
+  "result": "자가진단 결과 HDD 장애로 HDD 교체하도록 고객께 안내드렸습니다.",
+  "compStatus": "완료",
+  "aiMode": "skip"
+ },
+ {
+  "id": "V-26061002",
+  "vocNo": "N3951940",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "든든공장",
+  "industry": "산업",
+  "addr": "서울 강남구 압구정로 202",
+  "short": "압구정로 193",
+  "x": 58,
+  "y": 46,
+  "phone": "010-9132-5911",
+  "contact": "이수민 담당자",
+  "symptom": "화면 분할에서 빈 칸으로 나오는 카메라가 있어요.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "압구정지사-서비스",
+  "worker": "오태경",
+  "urgency": "low",
+  "sla": 8,
+  "status": "new",
+  "repeat": 3,
+  "reserve": "오늘 09:20",
+  "eta": 12,
+  "dist": 8.7,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.05.26",
+    "t": "선로 점검"
+   }
+  ]
+ },
+ {
+  "id": "V-26061003",
+  "vocNo": "N2083552",
+  "code": "030133",
+  "codeName": "[기기점검]카메라 점검",
+  "device": "CCTV 카메라",
+  "company": "알찬의원",
+  "industry": "의료",
+  "addr": "서울 서초구 서초대로 805",
+  "short": "서초대로 617",
+  "x": 54,
+  "y": 57,
+  "phone": "010-8472-1468",
+  "contact": "박현우 담당자",
+  "symptom": "특정 카메라가 너무 뿌옇게 나와요. 밤에 특히 심합니다.",
+  "memo": "특정 카메라 영상 이상. 현장 점검.",
+  "dept": "서초지사-서비스",
+  "worker": "강지훈",
+  "urgency": "low",
+  "sla": 1.5,
+  "status": "done",
+  "repeat": 2,
+  "reserve": "—",
+  "eta": 14,
+  "dist": 9.9,
+  "hasGuide": true,
+  "history": [],
+  "done": true,
+  "result": "카메라 아답터 불량으로 아답터 교체하여 복구했습니다.",
+  "compStatus": "부분 완료",
+  "aiMode": "use"
+ },
+ {
+  "id": "V-26061004",
+  "vocNo": "N6221594",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "라온마트",
+  "industry": "상점",
+  "addr": "서울 송파구 올림픽로 276",
+  "short": "올림픽로 691",
+  "x": 76,
+  "y": 56,
+  "phone": "010-7086-9576",
+  "contact": "최유진 담당자",
+  "symptom": "녹화기 옆 기기에서 삐삐 소음이 반복됩니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "송파지사-기술",
+  "worker": "윤도현",
+  "urgency": "mid",
+  "sla": 4,
+  "status": "inprogress",
+  "repeat": 2,
+  "reserve": "오늘 09:50",
+  "eta": 14,
+  "dist": 9.9,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061005",
+  "vocNo": "N6621047",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "튼튼카페",
+  "industry": "상점",
+  "addr": "서울 강동구 천호대로 779",
+  "short": "천호대로 255",
+  "x": 82,
+  "y": 48,
+  "phone": "010-5482-2777",
+  "contact": "정민호 담당자",
+  "symptom": "전기 점검 후 CCTV 일부가 안 나옵니다. 신호가 안 잡혀요.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "강동지사-서비스",
+  "worker": "임세라",
+  "urgency": "low",
+  "sla": 6,
+  "status": "inprogress",
+  "repeat": 2,
+  "reserve": "오늘 10:20",
+  "eta": 11,
+  "dist": 8.1,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061006",
+  "vocNo": "N6732480",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "코너어린이집",
+  "industry": "교육",
+  "addr": "서울 마포구 양화로 592",
+  "short": "양화로 357",
+  "x": 30,
+  "y": 45,
+  "phone": "010-8843-2226",
+  "contact": "한서연 담당자",
+  "symptom": "본체 전원이 자꾸 꺼져 녹화가 안 되는 것 같아요.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "마포지사-서비스",
+  "worker": "배준영",
+  "urgency": "high",
+  "sla": 4,
+  "status": "new",
+  "repeat": 0,
+  "reserve": "오늘 11:00",
+  "eta": 18,
+  "dist": 12.3,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.04.28",
+    "t": "뷰어 재설치"
+   }
+  ]
+ },
+ {
+  "id": "V-26061007",
+  "vocNo": "N4151718",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "그랜드약국",
+  "industry": "의료",
+  "addr": "서울 양천구 목동로 502",
+  "short": "목동로 151",
+  "x": 21,
+  "y": 62,
+  "phone": "010-7342-5163",
+  "contact": "오태경 담당자",
+  "symptom": "PC 뷰어에서 카메라 몇 대가 안 보여요. 재부팅해도 그대로입니다.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "서서울지사-기술",
+  "worker": "노은지",
+  "urgency": "high",
+  "sla": 1.5,
+  "status": "scheduled",
+  "repeat": 0,
+  "reserve": "오늘 11:40",
+  "eta": 24,
+  "dist": 15.9,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061008",
+  "vocNo": "N4769020",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "하나클리닉",
+  "industry": "의료",
+  "addr": "서울 강서구 화곡로 44",
+  "short": "화곡로 567",
+  "x": 18,
+  "y": 53,
+  "phone": "010-4993-3357",
+  "contact": "강지훈 담당자",
+  "symptom": "카메라 여러 대 중 한두 대가 신호 없음으로 뜹니다.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "강서지사-서비스",
+  "worker": "서동혁",
+  "urgency": "mid",
+  "sla": 20,
+  "status": "done",
+  "repeat": 0,
+  "reserve": "—",
+  "eta": 11,
+  "dist": 8.1,
+  "hasGuide": true,
+  "history": [],
+  "done": true,
+  "result": "뷰어 프로그램 재설치로 복구했습니다.",
+  "compStatus": "원격 조치 완료",
+  "aiMode": "use"
+ },
+ {
+  "id": "V-26061009",
+  "vocNo": "N3698083",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "그린학원",
+  "industry": "교육",
+  "addr": "서울 영등포구 여의대로 554",
+  "short": "여의대로 356",
+  "x": 22,
+  "y": 52,
+  "phone": "010-7625-9461",
+  "contact": "윤도현 담당자",
+  "symptom": "녹화기 옆 기기에서 삐삐 소음이 반복됩니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "영등포지사-서비스",
+  "worker": "문가영",
+  "urgency": "mid",
+  "sla": 8,
+  "status": "inprogress",
+  "repeat": 0,
+  "reserve": "오늘 13:10",
+  "eta": 16,
+  "dist": 11.1,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.06.10",
+    "t": "카메라 재등록"
+   }
+  ]
+ },
+ {
+  "id": "V-26061010",
+  "vocNo": "N2904500",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "CU편의점",
+  "industry": "상점",
+  "addr": "서울 관악구 남부순환로 31",
+  "short": "남부순환로 378",
+  "x": 44,
+  "y": 76,
+  "phone": "010-4034-8155",
+  "contact": "임세라 담당자",
+  "symptom": "녹화가 안 되고 있다는 알림이 떠서 확인 부탁드립니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "관악지사-기술",
+  "worker": "조성재",
+  "urgency": "mid",
+  "sla": 1.5,
+  "status": "inprogress",
+  "repeat": 3,
+  "reserve": "오늘 13:40",
+  "eta": 14,
+  "dist": 9.9,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061011",
+  "vocNo": "N6962655",
+  "code": "030133",
+  "codeName": "[기기점검]카메라 점검",
+  "device": "CCTV 카메라",
+  "company": "소담서점",
+  "industry": "상점",
+  "addr": "서울 구로구 디지털로 758",
+  "short": "디지털로 476",
+  "x": 24,
+  "y": 67,
+  "phone": "010-6773-5113",
+  "contact": "배준영 담당자",
+  "symptom": "카메라 각도가 틀어졌는지 원하는 곳이 안 보여요.",
+  "memo": "특정 카메라 영상 이상. 현장 점검.",
+  "dept": "구로지사-서비스",
+  "worker": "민지원",
+  "urgency": "mid",
+  "sla": 1,
+  "status": "scheduled",
+  "repeat": 2,
+  "reserve": "오늘 14:20",
+  "eta": 7,
+  "dist": 5.7,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061012",
+  "vocNo": "N6264246",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "이든제과",
+  "industry": "상점",
+  "addr": "서울 용산구 한강대로 791",
+  "short": "한강대로 662",
+  "x": 44,
+  "y": 52,
+  "phone": "010-3761-7995",
+  "contact": "노은지 담당자",
+  "symptom": "화면 분할에서 빈 칸으로 나오는 카메라가 있어요.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "용산지사-서비스",
+  "worker": "신재하",
+  "urgency": "low",
+  "sla": 12,
+  "status": "done",
+  "repeat": 0,
+  "reserve": "—",
+  "eta": 7,
+  "dist": 5.7,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.01.12",
+    "t": "HDD 점검 — 정상"
+   }
+  ],
+  "done": true,
+  "result": "카메라 재등록 후 복구했습니다.",
+  "compStatus": "완료",
+  "aiMode": "use"
+ },
+ {
+  "id": "V-26061013",
+  "vocNo": "N3371514",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "노을짐",
+  "industry": "체육",
+  "addr": "서울 중구 을지로 172",
+  "short": "을지로 378",
+  "x": 45,
+  "y": 42,
+  "phone": "010-8404-9780",
+  "contact": "서동혁 담당자",
+  "symptom": "PC 화면에서 일부 카메라가 나왔다 안 나왔다 반복됩니다.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "서울중앙지사-기술",
+  "worker": "권도윤",
+  "urgency": "high",
+  "sla": 20,
+  "status": "new",
+  "repeat": 0,
+  "reserve": "오늘 15:00",
+  "eta": 21,
+  "dist": 14.1,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061014",
+  "vocNo": "N5719908",
+  "code": "030133",
+  "codeName": "[기기점검]카메라 점검",
+  "device": "CCTV 카메라",
+  "company": "CU상가",
+  "industry": "상점",
+  "addr": "서울 성북구 종암로 77",
+  "short": "종암로 534",
+  "x": 59,
+  "y": 22,
+  "phone": "010-4091-2420",
+  "contact": "문가영 담당자",
+  "symptom": "역광 때문인지 낮에 특정 카메라가 하얗게 뜹니다.",
+  "memo": "특정 카메라 영상 이상. 현장 점검.",
+  "dept": "성북지사-서비스",
+  "worker": "황선우",
+  "urgency": "low",
+  "sla": 8,
+  "status": "new",
+  "repeat": 3,
+  "reserve": "오늘 15:40",
+  "eta": 24,
+  "dist": 15.9,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061015",
+  "vocNo": "N2505947",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "파랑약국",
+  "industry": "의료",
+  "addr": "서울 강북구 도봉로 365",
+  "short": "도봉로 92",
+  "x": 59,
+  "y": 18,
+  "phone": "010-8267-9367",
+  "contact": "조성재 담당자",
+  "symptom": "영상은 정상인데 본체에서 계속 소리가 납니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "강북지사-서비스",
+  "worker": "류지안",
+  "urgency": "high",
+  "sla": 6,
+  "status": "done",
+  "repeat": 3,
+  "reserve": "—",
+  "eta": 14,
+  "dist": 9.9,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.06.24",
+    "t": "아답터 교체"
+   }
+  ],
+  "done": true,
+  "result": "카메라 아답터 불량으로 아답터 교체하여 복구했습니다.",
+  "compStatus": "완료",
+  "aiMode": "use"
+ },
+ {
+  "id": "V-26061016",
+  "vocNo": "N2494882",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "코너카페",
+  "industry": "상점",
+  "addr": "서울 노원구 노해로 483",
+  "short": "노해로 801",
+  "x": 70,
+  "y": 20,
+  "phone": "010-8125-9779",
+  "contact": "민지원 담당자",
+  "symptom": "전기 점검 후 CCTV 일부가 안 나옵니다. 신호가 안 잡혀요.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "노원지사-기술",
+  "worker": "고은채",
+  "urgency": "high",
+  "sla": 20,
+  "status": "scheduled",
+  "repeat": 0,
+  "reserve": "오늘 16:20",
+  "eta": 28,
+  "dist": 18.3,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061017",
+  "vocNo": "N4032074",
+  "code": "030133",
+  "codeName": "[기기점검]카메라 점검",
+  "device": "CCTV 카메라",
+  "company": "슬기빌딩",
+  "industry": "시설",
+  "addr": "서울 동대문구 왕산로 258",
+  "short": "왕산로 595",
+  "x": 62,
+  "y": 38,
+  "phone": "010-3450-7894",
+  "contact": "신재하 담당자",
+  "symptom": "역광 때문인지 낮에 특정 카메라가 하얗게 뜹니다.",
+  "memo": "특정 카메라 영상 이상. 현장 점검.",
+  "dept": "동대문지사-서비스",
+  "worker": "남태현",
+  "urgency": "high",
+  "sla": 6,
+  "status": "done",
+  "repeat": 2,
+  "reserve": "—",
+  "eta": 24,
+  "dist": 15.9,
+  "hasGuide": true,
+  "history": [],
+  "done": true,
+  "result": "카메라 아답터 불량으로 아답터 교체하여 복구했습니다.",
+  "compStatus": "부분 완료",
+  "aiMode": "skip"
+ },
+ {
+  "id": "V-26061018",
+  "vocNo": "N3444138",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "파랑상가",
+  "industry": "상점",
+  "addr": "서울 광진구 능동로 811",
+  "short": "능동로 166",
+  "x": 66,
+  "y": 43,
+  "phone": "010-3080-9997",
+  "contact": "권도윤 담당자",
+  "symptom": "PC 화면에서 일부 카메라가 나왔다 안 나왔다 반복됩니다.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "광진지사-서비스",
+  "worker": "백지호",
+  "urgency": "mid",
+  "sla": 1.5,
+  "status": "scheduled",
+  "repeat": 3,
+  "reserve": "오늘 17:00",
+  "eta": 14,
+  "dist": 9.9,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061019",
+  "vocNo": "N3294580",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "프라임상가",
+  "industry": "상점",
+  "addr": "서울 성동구 왕십리로 493",
+  "short": "왕십리로 308",
+  "x": 58,
+  "y": 38,
+  "phone": "010-8223-4451",
+  "contact": "황선우 담당자",
+  "symptom": "저장장치 상태가 나쁘다는 메시지가 계속 뜹니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "성동지사-기술",
+  "worker": "전소민",
+  "urgency": "mid",
+  "sla": 2,
+  "status": "scheduled",
+  "repeat": 0,
+  "reserve": "내일 09:30",
+  "eta": 21,
+  "dist": 14.1,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.01.16",
+    "t": "HDD 점검 — 정상"
+   }
+  ]
+ },
+ {
+  "id": "V-26061020",
+  "vocNo": "N4605753",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "든든헬스장",
+  "industry": "체육",
+  "addr": "서울 은평구 통일로 374",
+  "short": "통일로 677",
+  "x": 34,
+  "y": 23,
+  "phone": "010-9972-4748",
+  "contact": "류지안 담당자",
+  "symptom": "영상은 정상인데 본체에서 계속 소리가 납니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "은평지사-서비스",
+  "worker": "김정록",
+  "urgency": "high",
+  "sla": 20,
+  "status": "done",
+  "repeat": 0,
+  "reserve": "—",
+  "eta": 12,
+  "dist": 8.7,
+  "hasGuide": true,
+  "history": [],
+  "done": true,
+  "result": "자가진단 결과 HDD 장애로 HDD 교체하도록 고객께 안내드렸습니다.",
+  "compStatus": "완료",
+  "aiMode": "use"
+ },
+ {
+  "id": "V-26061021",
+  "vocNo": "N3743009",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "으뜸주유소",
+  "industry": "주유",
+  "addr": "서울 중랑구 망우로 234",
+  "short": "망우로 433",
+  "x": 71,
+  "y": 31,
+  "phone": "010-4398-5333",
+  "contact": "고은채 담당자",
+  "symptom": "하드디스크에서 박박 소리가 크게 나요. 교체 문의드립니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "중랑지사-서비스",
+  "worker": "이수민",
+  "urgency": "mid",
+  "sla": 6,
+  "status": "inprogress",
+  "repeat": 0,
+  "reserve": "내일 10:30",
+  "eta": 9,
+  "dist": 6.9,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061022",
+  "vocNo": "N4689022",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "프라임오피스",
+  "industry": "시설",
+  "addr": "서울 금천구 시흥대로 81",
+  "short": "시흥대로 537",
+  "x": 32,
+  "y": 72,
+  "phone": "010-7588-2408",
+  "contact": "남태현 담당자",
+  "symptom": "PC 화면에서 일부 카메라가 나왔다 안 나왔다 반복됩니다.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "금천지사-기술",
+  "worker": "박현우",
+  "urgency": "low",
+  "sla": 2,
+  "status": "inprogress",
+  "repeat": 2,
+  "reserve": "내일 11:00",
+  "eta": 16,
+  "dist": 11.1,
+  "hasGuide": true,
+  "history": []
+ },
+ {
+  "id": "V-26061023",
+  "vocNo": "N2967247",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "나래식당",
+  "industry": "상점",
+  "addr": "서울 종로구 종로 470",
+  "short": "종로 245",
+  "x": 45,
+  "y": 35,
+  "phone": "010-7806-6969",
+  "contact": "백지호 담당자",
+  "symptom": "전기 점검 후 CCTV 일부가 안 나옵니다. 신호가 안 잡혀요.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "종로지사-서비스",
+  "worker": "최유진",
+  "urgency": "mid",
+  "sla": 6,
+  "status": "new",
+  "repeat": 0,
+  "reserve": "오늘 09:20",
+  "eta": 18,
+  "dist": 12.3,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.04.23",
+    "t": "HDD 점검 — 정상"
+   }
+  ]
+ },
+ {
+  "id": "V-26061024",
+  "vocNo": "N2470785",
+  "code": "030133",
+  "codeName": "[기기점검]카메라 점검",
+  "device": "CCTV 카메라",
+  "company": "그린정비소",
+  "industry": "시설",
+  "addr": "서울 노원구 동일로 558",
+  "short": "동일로 708",
+  "x": 67,
+  "y": 23,
+  "phone": "010-6489-1284",
+  "contact": "전소민 담당자",
+  "symptom": "카메라 한 대 화면이 깨진 것처럼 나옵니다. 색이 이상해요.",
+  "memo": "특정 카메라 영상 이상. 현장 점검.",
+  "dept": "노원지사-서비스",
+  "worker": "정민호",
+  "urgency": "mid",
+  "sla": 1.5,
+  "status": "new",
+  "repeat": 0,
+  "reserve": "오늘 09:50",
+  "eta": 9,
+  "dist": 6.9,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.01.11",
+    "t": "아답터 교체"
+   }
+  ]
+ },
+ {
+  "id": "V-26061025",
+  "vocNo": "N5619945",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "봄날주유소",
+  "industry": "주유",
+  "addr": "서울 강남구 테헤란로 64",
+  "short": "테헤란로 494",
+  "x": 64,
+  "y": 60,
+  "phone": "010-5581-3452",
+  "contact": "김정록 담당자",
+  "symptom": "화면 분할에서 빈 칸으로 나오는 카메라가 있어요.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "강남지사-기술",
+  "worker": "한서연",
+  "urgency": "low",
+  "sla": 12,
+  "status": "done",
+  "repeat": 0,
+  "reserve": "—",
+  "eta": 24,
+  "dist": 15.9,
+  "hasGuide": true,
+  "history": [],
+  "done": true,
+  "result": "뷰어 프로그램 재설치로 복구했습니다.",
+  "compStatus": "부분 완료",
+  "aiMode": "skip"
+ },
+ {
+  "id": "V-26061026",
+  "vocNo": "N3884134",
+  "code": "030130",
+  "codeName": "[영상이상]PC에서 일부 안보임",
+  "device": "PC뷰어 · 카메라",
+  "company": "하람미용실",
+  "industry": "상점",
+  "addr": "서울 강남구 압구정로 204",
+  "short": "압구정로 729",
+  "x": 59,
+  "y": 49,
+  "phone": "010-2065-4816",
+  "contact": "이수민 담당자",
+  "symptom": "뷰어 프로그램을 켜면 일부 카메라만 표시됩니다.",
+  "memo": "일부 채널 미표출. 뷰어/카메라 점검 필요.",
+  "dept": "압구정지사-서비스",
+  "worker": "오태경",
+  "urgency": "high",
+  "sla": 6,
+  "status": "new",
+  "repeat": 0,
+  "reserve": "오늘 10:20",
+  "eta": 7,
+  "dist": 5.7,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.03.04",
+    "t": "카메라 재등록"
+   }
+  ]
+ },
+ {
+  "id": "V-26061027",
+  "vocNo": "N3978232",
+  "code": "030133",
+  "codeName": "[기기점검]카메라 점검",
+  "device": "CCTV 카메라",
+  "company": "오름부동산",
+  "industry": "시설",
+  "addr": "서울 서초구 서초대로 791",
+  "short": "서초대로 435",
+  "x": 49,
+  "y": 58,
+  "phone": "010-5653-7586",
+  "contact": "박현우 담당자",
+  "symptom": "카메라 각도가 틀어졌는지 원하는 곳이 안 보여요.",
+  "memo": "특정 카메라 영상 이상. 현장 점검.",
+  "dept": "서초지사-서비스",
+  "worker": "강지훈",
+  "urgency": "high",
+  "sla": 1.5,
+  "status": "new",
+  "repeat": 2,
+  "reserve": "오늘 11:00",
+  "eta": 16,
+  "dist": 11.1,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.01.23",
+    "t": "HDD 점검 — 정상"
+   }
+  ]
+ },
+ {
+  "id": "V-26061028",
+  "vocNo": "N2581219",
+  "code": "030134",
+  "codeName": "[기기점검]본체점검",
+  "device": "녹화기(NVR)",
+  "company": "알찬식당",
+  "industry": "상점",
+  "addr": "서울 송파구 올림픽로 598",
+  "short": "올림픽로 552",
+  "x": 70,
+  "y": 60,
+  "phone": "010-3822-2993",
+  "contact": "최유진 담당자",
+  "symptom": "녹화기 옆 기기에서 삐삐 소음이 반복됩니다.",
+  "memo": "본체 이상 소음/알림. 자가진단 필요.",
+  "dept": "송파지사-기술",
+  "worker": "윤도현",
+  "urgency": "mid",
+  "sla": 4,
+  "status": "new",
+  "repeat": 3,
+  "reserve": "오늘 11:40",
+  "eta": 7,
+  "dist": 5.7,
+  "hasGuide": true,
+  "history": [
+   {
+    "d": "2026.03.11",
+    "t": "HDD 점검 — 정상"
+   }
+  ]
+ }
+];
+const URG={high:{t:"긴급",c:"b-high"},mid:{t:"일반",c:"b-low"},low:{t:"일반",c:"b-low"}};
+const STATUS={new:"신규 배정",scheduled:"방문 예정",inprogress:"진행 중",done:"완료"};
+
+const STATE={};
+VOCS.forEach(v=>STATE[v.id]={schedule:null, aiMode:v.aiMode||null, cause:null, causes:[], actionDone:false, result:v.result||"", completed:!!v.done, compStatus:v.compStatus||"완료"});
+// 접수코드별 점검 체크리스트 그룹 (동일 진단명끼리 묶고 조치방법/조치결과 수집)
+function dxGroupsOf(code){
+  const g=GUIDE[code]; if(!g) return [];
+  const map={}, order=[];
+  g.items.forEach(function(it){ if(!map[it.d]){map[it.d]={d:it.d,actions:[],rs:[]};order.push(it.d);} if(map[it.d].actions.indexOf(it.a)<0)map[it.d].actions.push(it.a); if(map[it.d].rs.indexOf(it.r)<0)map[it.d].rs.push(it.r); });
+  return order.map(function(d){return map[d];});
+}
+// '조치결과 입력 내용'(마지막 열)을 실제 조치결과 문장으로 자동완성
+function polishResult(r){
+  var s=(r||'').replace(/\s+/g,' ').trim();
+  if(!s) return '';
+  if(/니다\.?$/.test(s)) return s.replace(/\.?$/,'.');
+  if(/드림$/.test(s)) return s.replace(/드림$/,'드렸습니다.');
+  if(/협의$/.test(s)) return s.replace(/\s*협의$/,' 건은 고객과 협의하여 완료했습니다.');
+  if(/권유$/.test(s)) return s.replace(/\s*권유$/,'하도록 고객께 권유드렸습니다.');
+  if(/안내$/.test(s)) return s.replace(/\s*안내$/,'하도록 고객께 안내드렸습니다.');
+  if(/교체 복구$/.test(s)) return s.replace(/교체 복구$/,'교체하여 복구했습니다.');
+  if(/재배선 복구$/.test(s)) return s.replace(/재배선 복구$/,'재배선하여 복구했습니다.');
+  if(/복구$/.test(s)) return s+'했습니다.';
+  if(/완료$/.test(s)) return s+'했습니다.';
+  if(/제거$/.test(s)) return s+'했습니다.';
+  if(/예정$/.test(s)) return s.replace(/예정$/,'하기로 고객과 협의했습니다.');
+  return s+' 조치를 완료했습니다.';
+}
+
+/* =========================================================
+   Router / helpers
+   ========================================================= */
+const $=s=>document.querySelector(s);
+const screensEl=$("#screens");
+let stack=[]; // {name, params, el}
+let activeTab="";
+
+function ic(name,size=22,stroke=2){
+  const p={
+    home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+    list:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h4"/>',
+    route:'<circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M6 8.4v4c0 3 3 3 6 3s6 0 6 .6"/>',
+    bell:'<path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+    user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+    phone:'<path d="M4 5c0-1 1-2 2-2h2l2 5-2 1c1 3 3 5 6 6l1-2 5 2v2c0 1-1 2-2 2C11 21 3 13 4 5z"/>',
+    msg:'<rect x="3" y="4" width="18" height="14" rx="3"/><path d="M3 8l9 5 9-5"/>',
+    nav:'<path d="M12 2 3 21l9-4 9 4z"/>',
+    ai:'<path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z"/><circle cx="18" cy="17" r="1.4"/><circle cx="6" cy="16" r="1.1"/>',
+    check:'<path d="M4 12l5 5L20 6"/>',
+    mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    chevR:'<path d="M9 5l7 7-7 7"/>',
+    chevL:'<path d="M15 5l-7 7 7 7"/>',
+    pin:'<path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+    warn:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+    cam:'<rect x="3" y="7" width="18" height="12" rx="3"/><circle cx="12" cy="13" r="3.2"/><path d="M8 7l1.5-3h5L16 7"/>',
+    edit:'<path d="M4 20h16"/><path d="M14 4l6 6L8 22l-6 1 1-6z"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+    doc:'<path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4M9 13h6M9 17h6"/>',
+    flash:'<path d="M13 2 4 14h6l-1 8 9-12h-6z"/>',
+    skip:'<path d="M5 5l7 7-7 7zM14 5v14"/>',
+    sound:'<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/>',
+    grip:'<path d="M9 6h.01M9 12h.01M9 18h.01M15 6h.01M15 12h.01M15 18h.01"/>'
+  }[name]||'';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+}
+function initials(s){return (s||"?").replace(/[^가-힣A-Za-z0-9]/g,"").slice(0,2);}
+function toast(msg,icon="check"){const t=$("#toast");t.innerHTML=`<span style="color:var(--primary)">${ic(icon,17)}</span>${msg}`;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1900);}
+function haptic(el){el.animate([{transform:'scale(1)'},{transform:'scale(.93)'},{transform:'scale(1)'}],{duration:180,easing:'cubic-bezier(.34,1.56,.64,1)'});}
+// 텍스트 타이핑 효과 (조치 결과 자동 작성)
+function typeInto(ta,text,speed){
+  ta.value='';ta._typing=true;let i=0;
+  const t=setInterval(function(){i+=1;ta.value=text.slice(0,i);ta.scrollTop=ta.scrollHeight;if(i>=text.length){clearInterval(t);ta._typing=false;}},speed||22);
+  const finish=function(){clearInterval(t);if(ta._typing){ta.value=text;ta._typing=false;}};
+  ta._finish=finish;
+  ta.addEventListener('mousedown',finish,{once:true});
+  ta.addEventListener('focus',finish,{once:true});
+  ta.addEventListener('touchstart',finish,{once:true});
+}
+
+/* ---------- navigation ---------- */
+function makeScreen(html){const d=document.createElement('div');d.className='screen';d.innerHTML=html;return d;}
+function push(name,params={}){
+  const html=VIEWS[name](params);
+  const el=makeScreen(html);
+  screensEl.appendChild(el);
+  const prev=stack[stack.length-1];
+  el.classList.add('scr-in-push');
+  if(prev){prev.el.classList.add('scr-out-push');}
+  stack.push({name,params,el});
+  bindScreen(el,name,params);
+  el.querySelector('.scroll')?.scrollTo(0,0);
+  renderTabs();
+}
+function back(){
+  if(stack.length<=1)return;
+  const cur=stack.pop();
+  const prev=stack[stack.length-1];
+  cur.el.classList.remove('scr-in-push');
+  cur.el.classList.add('scr-out-pop');
+  if(prev){prev.el.classList.remove('scr-out-push');prev.el.classList.add('scr-in-pop');}
+  const rm=()=>{cur.el.remove();};
+  cur.el.addEventListener('animationend',rm,{once:true});
+  setTimeout(rm,460);
+  renderTabs();
+}
+function resetTo(name,params={}){
+  stack.forEach(s=>s.el.remove());stack=[];
+  const html=VIEWS[name](params);
+  const el=makeScreen(html);el.classList.add('scr-fade');
+  screensEl.appendChild(el);
+  stack.push({name,params,el});
+  bindScreen(el,name,params);
+  renderTabs();
+}
+function switchTab(tab){
+  if(activeTab===tab && stack.length===1)return;
+  activeTab=tab;
+  const map={home:'home',voc:'vocList',route:'route',alerts:'alerts',my:'my'};
+  resetTo(map[tab]);
+}
+
+/* =========================================================
+   VIEWS
+   ========================================================= */
+const VIEWS={};
+
+/* ---- Splash / Login ---- */
+VIEWS.login=()=>`
+<div class="scroll" style="display:flex;flex-direction:column;justify-content:center;padding:0 30px;text-align:center;">
+  <div class="reveal" style="animation-delay:.05s;margin-bottom:22px">
+    <div class="logoTile">
+      <svg class="inf" viewBox="0 0 100 60">
+        <path class="base" d="M50 30 C50 10 20 10 20 30 C20 50 50 50 50 30 C50 10 80 10 80 30 C80 50 50 50 50 30 Z"/>
+        <path class="flow" d="M50 30 C50 10 20 10 20 30 C20 50 50 50 50 30 C50 10 80 10 80 30 C80 50 50 50 50 30 Z"/>
+      </svg>
+    </div>
+  </div>
+  <div class="reveal" style="animation-delay:.12s">
+    <div style="font-size:36px;font-weight:850;letter-spacing:-.02em;margin-bottom:12px">에스원 <span class="numg" style="font-weight:900">Answer</span></div>
+    <p style="margin:0 auto 9px;max-width:300px;line-height:1.5;font-size:18.5px;font-weight:800;color:var(--text)">현장의 무게는 줄이고,<br>해결의 속도는 높이고</p>
+    <div class="eyebrow">AI CS 플랫폼</div>
+  </div>
+  <div class="reveal" style="animation-delay:.24s;margin-top:40px;text-align:left">
+    <div class="card" style="padding:20px;margin-bottom:12px">
+      <label class="tiny muted" style="font-weight:700">차량번호</label>
+      <div style="font-size:19px;font-weight:800;margin-top:4px">013</div>
+    </div>
+  </div>
+  <div class="reveal" style="animation-delay:.32s;margin-top:6px">
+    <button class="btn grad shine" id="loginBtn" style="padding:18px">로그인</button>
+  </div>
+</div>`;
+
+/* ---- Home ---- */
+VIEWS.home=()=>{
+  const mine=VOCS;
+  const total=mine.length;
+  const done=mine.filter(v=>STATE[v.id].completed).length;
+  const pct=Math.round(done/total*100);
+  const urgent=mine.filter(v=>v.urgency==='high'&&!STATE[v.id].completed).length;
+  const upcoming=[...mine].filter(v=>!STATE[v.id].completed && v.reserve.includes('오늘')).sort((a,b)=>a.reserve.localeCompare(b.reserve));
+  const next=upcoming[0];
+  const top=[...mine].filter(v=>v.urgency==='high'&&!STATE[v.id].completed).sort((a,b)=>a.dist-b.dist)[0] || recommend()[0];
+  return `
+<div class="scroll">
+  <div style="display:flex;align-items:center;gap:7px;padding:14px 20px 0">
+    <svg class="infMini" viewBox="0 0 100 60"><path d="M50 30 C50 10 20 10 20 30 C20 50 50 50 50 30 C50 10 80 10 80 30 C80 50 50 50 50 30 Z"/></svg>
+    <span style="font-weight:800;font-size:27px;letter-spacing:-.01em">에스원 <span class="numg" style="font-weight:900">Answer</span></span>
+  </div>
+  <div class="hdr" style="padding-top:8px">
+    <div style="flex:1">
+      <div class="tiny" style="color:var(--primary);font-weight:700">2026. 7. 3 (목) · 좋은 아침이에요</div>
+      <h1 style="font-size:23px;margin-top:2px">${USER.name}님 👋</h1>
+    </div>
+    <div class="avatar" style="background:var(--grad);color:#fff">CS</div>
+  </div>
+
+  <div style="padding:4px 20px 0" class="stagger">
+    <div class="card g" style="animation-delay:.05s;padding:20px;background:linear-gradient(140deg,rgba(76,141,255,.18),rgba(46,123,246,.12));border-color:var(--line2)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="tiny muted" style="font-weight:700">오늘 처리할 VOC</div>
+          <div class="big numg" style="font-size:44px" data-count="${total}">0</div>
+        </div>
+        <div style="text-align:right">
+          <div class="badge b-high" style="font-size:12px">${ic('warn',13)} 긴급 ${urgent}건</div>
+          <div class="tiny muted" style="margin-top:10px">평균 처리 14분</div>
+        </div>
+      </div>
+      <div class="track" style="margin-top:16px"><i style="width:0" data-w="${pct}%"></i></div>
+      <div class="tiny muted" style="margin-top:8px">오늘 목표 대비 <b style="color:var(--primary)">${pct}%</b> 완료 · ${done}건 처리</div>
+    </div>
+
+    <div style="animation-delay:.14s;margin-top:16px">
+      <div class="tiny" style="color:var(--primary);font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px">${ic('nav',14)} AI 추천 · 가장 가까운 긴급 고객</div>
+      <div class="card" data-voc="${top.id}" style="cursor:pointer;border:1.5px solid rgba(34,197,140,.35);box-shadow:0 0 34px -14px rgba(34,197,140,.5)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="badge ${URG[top.urgency].c}"><span class="dot"></span>${URG[top.urgency].t}</span>
+          <span class="tiny muted">${top.dist}km · 차량 ${top.eta}분</span>
+        </div>
+        <div style="font-size:17px;font-weight:800;margin-top:11px">${top.company}</div>
+        <div class="tiny muted" style="margin-top:4px">${top.codeName}</div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn sm grad" style="flex:1" data-nav="${top.id}">${ic('nav',15)} 길찾기</button>
+          <button class="btn sm ghost" style="flex:1" data-call="${top.phone}">${ic('phone',15)} 연락</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="animation-delay:.22s;margin-top:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="tiny muted" style="font-weight:800">다음 방문 예정</div>
+        <span class="tiny" style="color:var(--primary);font-weight:700" data-tab="route">동선 전체보기 ›</span>
+      </div>
+      ${upcoming.length?upcoming.slice(0,3).map(timelineRow).join(''):`<div class="card" style="text-align:center;padding:22px"><div class="tiny muted">예정된 진행 건이 없어요</div></div>`}
+    </div>
+  </div>
+  <div style="height:20px"></div>
+</div>`;
+};
+function timelineRow(v){return `
+<div class="card" data-voc="${v.id}" style="cursor:pointer;padding:15px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+  <div style="text-align:center;flex:none;width:52px">
+    <div style="font-size:15px;font-weight:800;color:var(--primary)">${v.reserve.replace('오늘 ','')}</div>
+    <div class="tiny muted">${v.eta}분</div>
+  </div>
+  <div style="width:1px;height:38px;background:var(--line)"></div>
+  <div style="flex:1;min-width:0">
+    <div style="font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.company}</div>
+    <div class="tiny muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.short} · ${v.device}</div>
+  </div>
+  <span class="badge ${URG[v.urgency].c}" style="flex:none">${URG[v.urgency].t}</span>
+</div>`;}
+
+/* ---- VOC list ---- */
+VIEWS.vocList=(p={})=>{
+  const filter=p.filter||'all';
+  const tabs=[['all','전체'],['high','긴급'],['inprogress','진행중'],['done','완료']];
+  let list=VOCS.filter(v=>{
+    if(filter==='high')return v.urgency==='high' && !STATE[v.id].completed;
+    if(filter==='inprogress')return !STATE[v.id].completed;
+    if(filter==='done')return STATE[v.id].completed;
+    return true;
+  });
+  return `
+<div class="hdr" style="padding-top:14px">
+  <div style="flex:1"><h1>VOC 배정함</h1><div class="sub">총 ${VOCS.length}건 · 미완료 ${VOCS.filter(v=>!STATE[v.id].completed).length}건</div></div>
+  <div style="width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--muted)">${ic('list',20)}</div>
+</div>
+<div style="padding:0 20px 12px">
+  <div class="pill-tabs">
+    ${tabs.map(([k,t])=>`<button data-filter="${k}" class="${k===filter?'on':''}">${t}</button>`).join('')}
+  </div>
+</div>
+<div class="scroll" style="padding-top:2px">
+  <div id="vocListBody" style="padding:0 20px"></div>
+  <div id="vocListReal" style="padding:0 20px;display:none">
+    ${list.map((v,i)=>vocCard(v,i)).join('')}
+  </div>
+</div>`;
+};
+function vocCard(v,i){
+  const st=STATE[v.id];
+  return `
+<div class="card" data-voc="${v.id}" style="cursor:pointer;margin-bottom:12px;opacity:0;transform:translateY(16px);animation:revUp .5s var(--spring) forwards;animation-delay:${i*.06}s;${v.urgency==='high'&&!st.completed?'border-color:rgba(255,91,114,.3)':''}">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge ${st.completed?'b-done':URG[v.urgency].c}"><span class="dot"></span>${st.completed?'완료':URG[v.urgency].t}</span>
+      ${v.repeat>1?`<span class="chip tiny" style="padding:4px 8px;color:#FF8494;background:rgba(255,91,114,.12);border-color:transparent">반복 ${v.repeat}회</span>`:''}
+    </div>
+    <span class="tiny muted">${v.vocNo}</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;margin-top:13px">
+    <div class="avatar">${initials(v.company)}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:800;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.company}</div>
+      <div class="tiny muted" style="margin-top:2px">${v.codeName}</div>
+    </div>
+  </div>
+  <div style="background:var(--surface2);border-radius:12px;padding:11px 13px;margin-top:13px;font-size:13px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">"${v.symptom}"</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:13px">
+    <span class="tiny muted">${ic('pin',13)} ${v.short} · ${v.dist}km</span>
+    <span class="chip ${v.reserve.includes('오늘')?'on':''}" style="padding:5px 10px">${ic('clock',12)} ${v.reserve}</span>
+  </div>
+</div>`;
+}
+
+/* ---- VOC detail ---- */
+VIEWS.detail=({id})=>{
+  const v=VOCS.find(x=>x.id===id);const st=STATE[v.id];
+  return `
+<div class="hdr">
+  <div class="back">${ic('chevL',22)}</div>
+  <div style="flex:1"><h1 style="font-size:17px">고객 VOC 조회</h1><div class="sub">${v.vocNo}</div></div>
+  <span class="badge ${st.completed?'b-done':URG[v.urgency].c}">${st.completed?'완료':URG[v.urgency].t}</span>
+</div>
+<div class="scroll">
+  <div style="padding:0 20px" class="stagger">
+    <!-- HERO -->
+    <div class="card g" style="animation-delay:.03s;border-color:var(--line2)">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <span class="chip on">${v.device}</span>
+        ${v.repeat>1?`<span class="chip" style="color:#FF8494;background:rgba(255,91,114,.12);border-color:transparent">반복 VOC ${v.repeat}회</span>`:''}
+        <span class="chip">${v.industry}</span>
+      </div>
+      <div style="font-size:22px;font-weight:850;letter-spacing:-.02em">${v.company}</div>
+      <div class="muted" style="font-size:14px;margin-top:3px">${v.codeName}</div>
+      <div style="display:flex;gap:16px;margin-top:16px">
+        <div><div class="tiny muted">긴급도</div><div style="font-weight:800;color:${v.urgency==='high'?'#FF8494':'#84AEFF'}">${URG[v.urgency].t}</div></div>
+        <div><div class="tiny muted">거리</div><div style="font-weight:800">${v.dist}km</div></div>
+        <div><div class="tiny muted">예약</div><div style="font-weight:800">${v.reserve.replace('오늘 ','')}</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px">
+        <button class="iconbtn" data-call="${v.phone}"><span class="ic" style="background:rgba(34,197,140,.15);color:var(--primary)">${ic('phone',20)}</span>전화</button>
+        <button class="iconbtn" data-sms="${v.id}"><span class="ic" style="background:rgba(76,141,255,.15);color:#84AEFF">${ic('msg',20)}</span>문자</button>
+        <button class="iconbtn" data-nav="${v.id}"><span class="ic" style="background:rgba(46,123,246,.15);color:var(--violet2)">${ic('nav',20)}</span>길찾기</button>
+        <button class="iconbtn" data-schedule="${v.id}"><span class="ic" style="background:rgba(255,176,32,.15);color:#FFC24D">${ic('clock',20)}</span>일정</button>
+      </div>
+    </div>
+
+    <!-- 접수 내용 -->
+    <div class="section-t" style="margin-left:0">접수 내용</div>
+    <div class="card">
+      <div class="tiny" style="color:var(--primary);font-weight:700;margin-bottom:6px">고객 접수 원문</div>
+      <p style="margin:0;font-size:14.5px;line-height:1.65">${v.symptom}</p>
+      <hr class="sep">
+      <div class="tiny" style="color:var(--warn);font-weight:700;margin-bottom:6px">${ic('doc',12)} 고객센터 정리 메모</div>
+      <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--muted)">${v.memo}</p>
+    </div>
+
+    <!-- 고객/장비 -->
+    <div class="section-t" style="margin-left:0">고객 · 장비 정보</div>
+    <div class="card">
+      <div class="kv"><span class="k">담당자</span><span class="v">${v.contact}</span></div>
+      <div class="kv"><span class="k">연락처</span><span class="v" style="color:var(--primary)">${v.phone}</span></div>
+      <div class="kv"><span class="k">주소</span><span class="v">${v.addr}</span></div>
+      <div class="kv"><span class="k">장비</span><span class="v">${v.device}</span></div>
+      <div class="kv"><span class="k">접수코드</span><span class="v">${v.code}</span></div>
+      <div class="kv"><span class="k">담당부서</span><span class="v" style="font-size:12.5px">${v.dept}</span></div>
+    </div>
+
+    <!-- 이력 -->
+    ${v.history.length?`<div class="section-t" style="margin-left:0">과거 장애 이력 · ${v.history.length}건</div>
+    <div class="card">${v.history.map((h,i)=>`<div class="kv"><span class="k">${h.d}</span><span class="v" style="font-weight:600;color:var(--text)">${h.t}</span></div>`).join('')}</div>`:''}
+  </div>
+  <div style="height:110px"></div>
+</div>
+<div class="dock">
+  ${st.completed
+    ? `<button class="btn ghost" data-view-result="${v.id}">${ic('doc',17)} 조치 결과 보기</button>`
+    : `<div style="display:flex;gap:10px">
+        <button class="btn shine" style="flex:1.5" data-aidirect="use" data-id="${v.id}">${ic('ai',18)} AI 가이드 사용</button>
+        <button class="btn ghost" style="flex:1" data-aidirect="skip" data-id="${v.id}">${ic('skip',16)} 건너뛰기</button>
+       </div>`}
+</div>`;
+};
+
+/* ---- AI toggle ---- */
+VIEWS.aiToggle=({id})=>{
+  const v=VOCS.find(x=>x.id===id);
+  return `
+<div class="hdr"><div class="back">${ic('chevL',22)}</div><div style="flex:1"><h1 style="font-size:17px">조치 방식 선택</h1><div class="sub">${v.company}</div></div></div>
+<div class="scroll">
+  <div style="padding:8px 22px 0" class="fadein">
+    <div class="eyebrow">STEP 1 · 시작하기 전에</div>
+    <div class="big" style="font-size:26px;margin-top:8px">이번 조치, 어떻게<br>진행할까요?</div>
+    <p class="muted" style="font-size:14px;margin-top:10px;line-height:1.6">AI 가이드는 <b style="color:var(--primary)">선택</b>이에요. 익숙하면 건너뛰고 바로 결과만 입력해도 됩니다.</p>
+  </div>
+  <div style="padding:22px 20px 0" class="stagger">
+    <!-- AI 사용 -->
+    <div class="card" data-ai="use" data-id="${id}" style="animation-delay:.05s;cursor:pointer;border:1.5px solid rgba(34,197,140,.4);background:linear-gradient(155deg,rgba(34,197,140,.1),rgba(17,26,46,.9))">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:50px;height:50px;border-radius:15px;background:var(--grad-mint);display:grid;place-items:center;color:#04121a">${ic('ai',26)}</div>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:17px">AI 가이드 사용</div>
+          <div class="tiny muted">진단 체크리스트 → 조치 가이드 → 결과 자동 입력</div>
+        </div>
+        <span style="color:var(--primary)">${ic('chevR',20)}</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap">
+        <span class="chip on tiny">단계별 안내</span>
+        <span class="chip on tiny">조치결과 자동완성</span>
+        <span class="chip on tiny">신입 추천</span>
+      </div>
+    </div>
+    <!-- SKIP -->
+    <div class="card" data-ai="skip" data-id="${id}" style="animation-delay:.13s;cursor:pointer;margin-top:12px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:50px;height:50px;border-radius:15px;background:var(--surface3);display:grid;place-items:center;color:var(--muted)">${ic('skip',24)}</div>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:17px">건너뛰기 (SKIP)</div>
+          <div class="tiny muted">바로 조치하고 결과만 입력 · 음성/텍스트</div>
+        </div>
+        <span class="muted">${ic('chevR',20)}</span>
+      </div>
+      <div style="background:rgba(46,123,246,.1);border-radius:12px;padding:11px 13px;margin-top:14px;font-size:12.5px;color:var(--violet2);line-height:1.5">
+        ${ic('flash',13)} 숙련자님의 조치 결과는 <b>AI 가이드 개선</b>에 소중하게 활용돼요.
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:22px;padding:0 4px">
+      <div>
+        <div style="font-weight:700;font-size:14px">다음부터 이 선택 기억하기</div>
+        <div class="tiny muted">마이페이지에서 언제든 변경 가능</div>
+      </div>
+      <div class="sw ${USER.aiDefault?'on':''}" id="rememberSw"><i></i></div>
+    </div>
+  </div>
+</div>`;
+};
+
+/* ---- AI Diagnosis checklist ---- */
+VIEWS.diagnose=({id})=>{
+  const v=VOCS.find(x=>x.id===id);const g=GUIDE[v.code];
+  if(!g) return `
+<div class="hdr"><div class="back">${ic('chevL',22)}</div><div style="flex:1"><h1 style="font-size:17px">AI 진단</h1><div class="sub">${v.codeName}</div></div></div>
+<div class="scroll"><div style="padding:14px 20px 0" class="fadein">
+  <div class="card g" style="border-color:var(--line2);text-align:center;padding:28px 20px">
+    <div style="width:62px;height:62px;border-radius:19px;background:var(--grad);display:grid;place-items:center;margin:0 auto 16px;color:#fff">${ic('ai',30)}</div>
+    <div style="font-weight:850;font-size:18px">표준 AI 가이드 준비 중</div>
+    <p class="muted" style="margin-top:10px;font-size:13.5px;line-height:1.65">「${v.codeName}」 유형은 아직 표준 진단·조치 가이드가 학습되지 않았어요.<br>지금은 <b style="color:var(--primary)">현장 전문가의 판단</b>이 가장 정확합니다.</p>
+  </div>
+  <div class="card" style="margin-top:12px;background:rgba(46,123,246,.1);border-color:var(--line2);display:flex;gap:11px;align-items:center">
+    <div style="width:36px;height:36px;border-radius:11px;background:var(--violet);display:grid;place-items:center;flex:none;color:#fff">${ic('flash',18)}</div>
+    <div class="tiny" style="line-height:1.55">지금 입력하시는 조치 결과가 <b style="color:var(--violet2)">${v.code} 가이드</b>의 학습 데이터가 됩니다. 다음 CS가 더 빨라져요.</div>
+  </div>
+</div><div style="height:110px"></div></div>
+<div class="dock"><button class="btn shine" data-noguide="${id}">${ic('edit',17)} 현장 조치 후 결과 입력</button></div>`;
+  const groups=dxGroupsOf(v.code);
+  return `
+<div class="hdr"><div class="back">${ic('chevL',22)}</div><div style="flex:1"><h1 style="font-size:17px">AI 진단 체크리스트</h1><div class="sub">${g.name}</div></div></div>
+<div style="padding:0 20px 12px"><div class="steps"><i class="on"></i><i></i><i></i></div><div class="tiny muted" style="margin-top:8px">1/3 · 원인 진단</div></div>
+<div class="scroll">
+  <div style="padding:6px 20px 0" class="fadein">
+    <div class="card" style="background:linear-gradient(150deg,rgba(76,141,255,.14),rgba(17,26,46,.9));border-color:var(--line2);display:flex;gap:12px;align-items:flex-start">
+      <div style="width:38px;height:38px;border-radius:12px;background:var(--grad);display:grid;place-items:center;flex:none;color:#fff">${ic('ai',20)}</div>
+      <div>
+        <div style="font-weight:800;font-size:14px">AI 분석 완료</div>
+        <div class="tiny muted" style="margin-top:3px;line-height:1.5">접수 내용·기기 매뉴얼·과거 이력을 종합했어요.<br>현장에서 <b style="color:var(--primary)">확인된 증상을 모두 선택</b>하세요. (복수 선택 가능)</div>
+      </div>
+    </div>
+    <div class="section-t" style="margin-left:2px">점검 체크리스트 · 복수 선택</div>
+  </div>
+  <div style="padding:0 20px" id="dxList">
+    ${groups.map((grp,i)=>`
+      <div class="check" data-dx="${i}" style="opacity:0;transform:translateY(14px);animation:revUp .5s var(--spring) forwards;animation-delay:${.1+i*.06}s">
+        <div class="box">${ic('check',15,3)}</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            <span style="font-weight:700;font-size:14.5px">${grp.d}</span>
+            ${i===0?`<span class="chip on tiny" style="padding:3px 8px">AI 유력</span>`:''}
+          </div>
+        </div>
+      </div>`).join('')}
+  </div>
+  <div style="height:110px"></div>
+</div>
+<div class="dock"><button class="btn" id="toGuide" data-id="${id}" disabled>AI 조치 가이드 확인 <span id="dxN"></span></button></div>`;
+};
+
+/* ---- AI Action guide (조치 방법만, 중복 제거) ---- */
+VIEWS.guide=({id})=>{
+  const v=VOCS.find(x=>x.id===id);const g=GUIDE[v.code];const st=STATE[v.id];
+  const groups=dxGroupsOf(v.code);
+  const chosen=(st.causes||[]).map(i=>groups[i]).filter(Boolean);
+  const actions=[]; chosen.forEach(function(grp){grp.actions.forEach(function(a){if(actions.indexOf(a)<0)actions.push(a);});});
+  return `
+<div class="hdr"><div class="back">${ic('chevL',22)}</div><div style="flex:1"><h1 style="font-size:17px">AI 조치 가이드</h1><div class="sub">조치 방법 ${actions.length}개</div></div></div>
+<div style="padding:0 20px 12px"><div class="steps"><i class="on"></i><i class="on"></i><i></i></div><div class="tiny muted" style="margin-top:8px">2/3 · 조치 수행</div></div>
+<div class="scroll">
+  <div style="padding:6px 20px 0" class="fadein">
+    <div class="section-t" style="margin-left:2px">조치 방법 · 완료 시 체크</div>
+  </div>
+  <div style="padding:0 20px" id="guideSteps">
+    ${actions.map((a,i)=>`
+      <div class="card gstep" data-step="${i}" style="margin-bottom:11px;padding:15px;display:flex;gap:13px;align-items:flex-start;transition:.3s;opacity:0;transform:translateY(14px);animation:revUp .5s var(--spring) forwards;animation-delay:${.06+i*.07}s">
+        <div class="snum" style="width:30px;height:30px;border-radius:10px;background:var(--surface3);color:var(--muted);display:grid;place-items:center;font-weight:800;flex:none;transition:.3s">${i+1}</div>
+        <div style="flex:1;padding-top:3px;font-size:14.5px;line-height:1.55;white-space:pre-line">${a}</div>
+      </div>`).join('')}
+  </div>
+  <div style="padding:0 20px;margin-top:6px" class="fadein">
+    <div class="tiny muted" style="text-align:center;line-height:1.6">모든 조치를 완료하면 아래 버튼이 활성화돼요.</div>
+    <button class="btn ghost" data-reguide="${id}" style="margin-top:12px">${ic('chevL',15)} 다른 원인으로 다시 진단</button>
+  </div>
+  <div style="height:110px"></div>
+</div>
+<div class="dock"><button class="btn" id="toResult" data-id="${id}">${ic('check',17)} VOC 조치 결과 입력</button></div>`;
+};
+
+/* ---- Result (AI auto-filled) ---- */
+VIEWS.result=({id})=>{
+  const v=VOCS.find(x=>x.id===id);const g=GUIDE[v.code];const st=STATE[v.id];
+  const grps=dxGroupsOf(v.code);
+  var _seen={};
+  const auto = (st.aiMode==='use' && g && st.causes && st.causes.length)
+    ? st.causes.map(function(i){return grps[i]?polishResult(grps[i].rs[0]):'';}).filter(function(x){if(!x||_seen[x])return false;_seen[x]=1;return true;}).join('\n') : '';
+  st.result = st.result || auto;
+  const willType = !!auto && !st.completed && st.result===auto;
+  const statuses=['조치 완료','부분 완료','재방문 필요','원격 조치 완료'];
+  if(statuses.indexOf(st.compStatus)<0) st.compStatus=statuses[0];
+  return `
+<div class="hdr"><div class="back">${ic('chevL',22)}</div><div style="flex:1"><h1 style="font-size:17px">조치 결과 입력</h1><div class="sub">${v.company}</div></div></div>
+<div style="padding:0 20px 12px"><div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="tiny muted" style="margin-top:8px">3/3 · 결과 기록</div></div>
+<div class="scroll">
+  <div style="padding:6px 20px 0" class="fadein">
+    ${auto?`
+    <div class="card" style="background:linear-gradient(150deg,rgba(34,197,140,.12),rgba(17,26,46,.9));border-color:rgba(34,197,140,.35);display:flex;gap:11px;align-items:center">
+      <div style="width:38px;height:38px;border-radius:12px;background:var(--grad-mint);display:grid;place-items:center;flex:none;color:#04121a">${ic('ai',20)}</div>
+      <div><div style="font-weight:800;font-size:14px">AI가 조치 결과를 작성했어요</div><div class="tiny muted">수행한 진단·조치를 바탕으로 표준 문구를 생성했습니다.<br>자유롭게 수정하세요.</div></div>
+    </div>`:''}
+
+    <div class="section-t" style="margin-left:2px">조치 결과 <span style="color:var(--danger)">*</span></div>
+    <textarea class="ta" id="resultTa" rows="4" placeholder="조치 내용을 입력하세요" ${willType?'data-type="1"':''}>${willType?'':st.result}</textarea>
+    <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+      ${((g?g.items:[]).slice(0,3)).map(it=>`<span class="chip tiny" data-quick="${it.r.replace(/"/g,'&quot;')}" style="cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">+ ${it.r.slice(0,16)}…</span>`).join('')}
+      <span class="chip tiny" data-voice="${id}" style="cursor:pointer;color:var(--primary);border-color:rgba(34,197,140,.4)">${ic('mic',12)} 음성으로 추가</span>
+    </div>
+
+    <div class="section-t" style="margin-left:2px">처리 상태</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px" id="statusPick">
+      ${statuses.map((s)=>`<span class="chip ${s===st.compStatus?'on':''}" data-status="${s}" style="cursor:pointer">${s}</span>`).join('')}
+    </div>
+
+    <div class="section-t" style="margin-left:2px">추가 특이사항</div>
+    <div class="card" style="padding:6px 16px">
+      <div class="kv" style="align-items:center"><span class="k" style="color:var(--text);font-weight:700">부품 교체 발생</span><div class="sw" data-flag="part"><i></i></div></div>
+      <div class="kv" style="align-items:center;border:none"><span class="k" style="color:var(--text);font-weight:700">고객 확인 완료</span><div class="sw on" data-flag="confirm"><i></i></div></div>
+    </div>
+  </div>
+  <div style="height:120px"></div>
+</div>
+<div class="dock"><button class="btn shine" id="complete" data-id="${id}">VOC 완료 처리하기</button></div>`;
+};
+
+/* ---- Completion ---- */
+VIEWS.done=({id})=>{
+  const v=VOCS.find(x=>x.id===id);const st=STATE[v.id];
+  return `
+<div class="scroll" style="display:flex;flex-direction:column;justify-content:center;padding:0 26px;text-align:center">
+  <div class="burst"><div class="ring"></div><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#04121a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></div>
+  <div class="fadein" style="animation-delay:.3s">
+    <div class="big" style="font-size:26px">VOC 완료 처리됐어요</div>
+    <p class="muted" style="margin-top:10px;font-size:14px">${v.company} · ${v.codeName}</p>
+  </div>
+  <div class="card fadein" style="animation-delay:.42s;margin-top:24px;text-align:left">
+    <div class="kv"><span class="k">처리 상태</span><span class="v" style="color:var(--primary)">${st.compStatus}</span></div>
+    <div class="kv"><span class="k">방문 시간</span><span class="v">${v.reserve.replace('오늘 ','오늘 ')}</span></div>
+    ${st.aiMode!=='skip'?`<div class="kv"><span class="k">조치 방식</span><span class="v">AI 가이드</span></div>`:''}
+    <div class="kv" style="border:none;flex-direction:column;align-items:flex-start;gap:6px"><span class="k">조치 결과</span><span class="v" style="text-align:left;font-weight:600;line-height:1.5">${st.result}</span></div>
+  </div>
+  ${st.aiMode==='skip'?`
+  <div class="card fadein" style="animation-delay:.52s;margin-top:12px;background:linear-gradient(150deg,rgba(46,123,246,.14),rgba(17,26,46,.9));border-color:var(--line2);text-align:left;display:flex;gap:11px;align-items:center">
+    <div style="width:36px;height:36px;border-radius:11px;background:var(--violet);display:grid;place-items:center;flex:none">${ic('flash',18)}</div>
+    <div class="tiny" style="line-height:1.5">입력하신 조치 결과가 <b style="color:var(--violet2)">'접수코드 ${v.code}'</b> 가이드 학습에<br>반영 대기로 저장되었습니다.</div>
+  </div>`:''}
+  <div class="fadein" style="animation-delay:.6s;margin-top:24px">
+    <button class="btn" data-home="1">${ic('home',17)} 다음 VOC 처리하기</button>
+  </div>
+</div>`;
+};
+
+/* ---- 길찾기 · 내비게이션 ---- */
+VIEWS.navi=({id})=>{
+  const v=VOCS.find(x=>x.id===id);
+  const t=9*60+41+v.eta; const arrive=(Math.floor(t/60)%24)+':'+String(t%60).padStart(2,'0');
+  const road=(v.short||'').split(' ')[0];
+  const ROUTE="M50 142 L50 120 Q50 108 40 108 L26 108 Q16 108 16 96 L16 64 Q16 52 30 52 L58 52 Q70 52 70 40 L70 22";
+  return `
+<div style="position:relative;flex:1;overflow:hidden">
+  <svg class="navmap" viewBox="0 0 100 150" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <rect x="-5" y="-5" width="110" height="160" fill="#0a1322"/>
+    <g fill="rgba(120,145,190,.05)">
+      <rect x="20" y="56" width="26" height="48" rx="3"/><rect x="54" y="56" width="12" height="48" rx="3"/>
+      <rect x="20" y="6" width="26" height="42" rx="3"/><rect x="54" y="6" width="12" height="42" rx="3"/>
+      <rect x="74" y="24" width="24" height="24" rx="3"/><rect x="20" y="112" width="46" height="34" rx="3"/>
+    </g>
+    <g stroke="rgba(150,170,210,.10)" stroke-width="7" stroke-linecap="round">
+      <line x1="16" y1="-5" x2="16" y2="155"/><line x1="50" y1="-5" x2="50" y2="155"/><line x1="70" y1="-5" x2="70" y2="155"/>
+      <line x1="-5" y1="52" x2="105" y2="52"/><line x1="-5" y1="108" x2="105" y2="108"/>
+    </g>
+    <g stroke="rgba(150,170,210,.05)" stroke-width="2.5"><line x1="34" y1="-5" x2="34" y2="155"/><line x1="88" y1="-5" x2="88" y2="155"/><line x1="-5" y1="26" x2="105" y2="26"/><line x1="-5" y1="82" x2="105" y2="82"/><line x1="-5" y1="134" x2="105" y2="134"/></g>
+    <path pathLength="100" class="route-line" d="${ROUTE}"/>
+    <path id="route" pathLength="100" class="route-flow" d="${ROUTE}"/>
+    <circle cx="50" cy="142" r="6" fill="#2E8BF6"/>
+    <circle cx="50" cy="142" r="6" fill="none" stroke="#2E8BF6" stroke-width="1.5"><animate attributeName="r" values="6;14;6" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;0;.7" dur="2s" repeatCount="indefinite"/></circle>
+    <g transform="translate(70,22)">
+      <ellipse cx="0" cy="1" rx="4.5" ry="1.6" fill="rgba(0,0,0,.35)"/>
+      <path d="M0 0 C7 0 10 -6 10 -10 A10 10 0 1 0 -10 -10 C-10 -6 -7 0 0 0 Z" fill="#25C56A" stroke="#fff" stroke-width="1"/>
+      <circle cx="0" cy="-10" r="4" fill="#fff"/>
+    </g>
+    <g class="car">
+      <circle r="9" fill="#2E8BF6" opacity=".22"/>
+      <circle r="5.5" fill="#fff"/>
+      <path d="M0 -3.4 L2.7 2.6 L0 1 L-2.7 2.6 Z" fill="#2E8BF6"/>
+    </g>
+  </svg>
+
+  <div style="position:absolute;top:10px;left:16px;right:16px;display:flex;gap:10px;align-items:center;z-index:5">
+    <div class="back glass" style="width:44px;height:44px;border-radius:14px;display:grid;place-items:center;flex:none;cursor:pointer">${ic('chevL',22)}</div>
+    <div class="glass" style="flex:1;padding:10px 14px;border-radius:14px;display:flex;align-items:center;gap:11px;min-width:0">
+      <span style="color:var(--primary);flex:none">${ic('nav',18)}</span>
+      <div style="min-width:0"><div class="tiny muted" style="font-weight:600">목적지</div><div style="font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.company} · ${v.short}</div></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;top:80px;left:16px;right:16px;z-index:5" class="fadein">
+    <div style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#2E7BF6,#25C56A);border-radius:18px;color:#fff;padding:14px 18px;box-shadow:0 12px 30px -10px rgba(37,197,106,.5)">
+      <div style="font-size:30px;line-height:1;font-weight:700">↱</div>
+      <div><div style="font-weight:850;font-size:17px">300m 앞 우회전</div><div style="font-size:12.5px;opacity:.9">${road} 방면 · 잠시 후</div></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;z-index:5;padding:20px 18px calc(18px + var(--safe-bottom));background:linear-gradient(to top,var(--bg) 68%,transparent)">
+    <div class="card" style="padding:16px 18px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between">
+        <div><span class="big numm" style="font-size:30px">${v.eta}</span><span style="font-weight:700;font-size:15px"> 분</span> <span class="tiny muted" style="margin-left:6px">예상 소요</span></div>
+        <div style="text-align:right"><div style="font-weight:800;font-size:16px">${v.dist} km</div><div class="tiny muted">도착 ${arrive} 예정</div></div>
+      </div>
+      <div class="track" style="margin-top:13px"><i style="width:0" data-w="24%"></i></div>
+      <div style="display:flex;gap:8px;margin-top:15px">
+        <button class="btn shine" style="flex:1.7" data-startnav="${id}">${ic('nav',17)} 안내 시작</button>
+        <button class="btn ghost" style="flex:1" data-call="${v.phone}">${ic('phone',16)} 전화</button>
+      </div>
+    </div>
+  </div>
+</div>`;
+};
+
+/* ---- Route ---- */
+VIEWS.route=()=>{
+  return `
+<div class="hdr" style="padding-top:14px"><div style="flex:1"><h1>오늘의 동선</h1><div class="sub">AI 추천 · 가까운 순 정렬</div></div></div>
+<div class="scroll">
+  <div style="padding:0 20px" class="fadein">
+    <div class="map" id="routeMap"></div>
+    <div style="margin-top:14px;padding:2px 6px;display:flex;align-items:center;gap:7px">
+      <span class="tiny muted" style="font-weight:700">방문지</span><span id="routeCount" class="numm" style="font-weight:800;font-size:16px">–</span>
+    </div>
+    <div class="section-t" style="margin-left:2px;margin-bottom:6px">추천 방문 순서 <span class="tiny muted" style="font-weight:600">· 손잡이를 끌어 순서 변경</span></div>
+  </div>
+  <div style="padding:0 20px" id="routeList"></div>
+  <div style="height:20px"></div>
+</div>`;
+};
+function recommend(){
+  // 가까운 순(거리 오름차순)
+  return [...VOCS].filter(v=>!STATE[v.id].completed).sort((a,b)=>a.dist-b.dist);
+}
+let routeOrder=null;
+function routeList(){
+  if(!routeOrder) routeOrder=recommend().map(v=>v.id);
+  routeOrder=routeOrder.filter(id=>{const v=VOCS.find(x=>x.id===id);return v && !STATE[id].completed;});
+  recommend().forEach(v=>{if(!routeOrder.includes(v.id))routeOrder.push(v.id);});
+  return routeOrder.map(id=>VOCS.find(v=>v.id===id));
+}
+function renderRoute(scope){
+  const order=routeList();
+  const mapEl=scope.querySelector('#routeMap');
+  if(!mapEl) return;
+  mapEl.innerHTML=
+    order.map((v,i)=>`<div class="pin" style="left:${v.x}%;top:${v.y}%;animation:revUp .45s var(--spring) both;animation-delay:${i*.05}s">
+      <div class="p" style="background:${i===0?'var(--grad-mint)':'linear-gradient(135deg,#2E7BF6,#25C56A)'}"><b>${i+1}</b></div></div>`).join('')
+    +`<svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1" viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="${order.map(v=>`${v.x},${v.y}`).join(' ')}" fill="none" stroke="rgba(34,197,140,.55)" stroke-width="0.9" stroke-dasharray="2 2" style="stroke-dashoffset:200;animation:draw 1.2s .1s forwards"/></svg>`
+    +`<div style="position:absolute;left:14px;top:14px;z-index:4" class="chip on tiny">${ic('pin',12)} 현재 위치 기준 · 가까운 순</div>`;
+  scope.querySelector('#routeCount').textContent=order.length+'곳';
+  const listEl=scope.querySelector('#routeList');
+  listEl.innerHTML=order.map((v,i)=>`
+    <div class="card rrow" data-idx="${i}" data-voc="${v.id}" style="cursor:pointer;margin-bottom:11px;display:flex;gap:11px;align-items:center;${i===0?'border-color:rgba(34,197,140,.4)':''}">
+      <div class="grip" draggable="true" data-idx="${i}">${ic('grip',20)}</div>
+      <div style="width:32px;height:32px;border-radius:10px;background:${i===0?'var(--grad-mint)':'var(--surface3)'};color:${i===0?'#04121a':'var(--muted)'};display:grid;place-items:center;font-weight:800;flex:none">${i+1}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.company}</div>
+        <div class="tiny muted" style="margin-top:2px">${v.dist}km · ${v.short}</div>
+        ${i===0?`<div class="tiny" style="color:var(--primary);margin-top:5px;font-weight:600">${ic('pin',11)} 최우선 방문</div>`:''}
+      </div>
+      <span class="badge ${URG[v.urgency].c}" style="flex:none">${URG[v.urgency].t}</span>
+    </div>`).join('');
+  wireRouteDnD(scope,listEl);
+}
+let _dragIdx=null;
+function wireRouteDnD(scope,listEl){
+  listEl.querySelectorAll('.grip').forEach(g=>{
+    g.onclick=e=>e.stopPropagation();
+    g.ondragstart=e=>{_dragIdx=+g.dataset.idx;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',g.dataset.idx);}catch(_){}g.closest('.rrow').classList.add('dragging');};
+    g.ondragend=()=>{listEl.querySelectorAll('.rrow').forEach(r=>r.classList.remove('dragging','over'));_dragIdx=null;};
+  });
+  listEl.querySelectorAll('.rrow').forEach(row=>{
+    row.ondragover=e=>{e.preventDefault();row.classList.add('over');};
+    row.ondragleave=()=>row.classList.remove('over');
+    row.ondrop=e=>{e.preventDefault();const to=+row.dataset.idx;if(_dragIdx===null||_dragIdx===to){row.classList.remove('over');return;}
+      const m=routeOrder.splice(_dragIdx,1)[0];routeOrder.splice(to,0,m);_dragIdx=null;renderRoute(scope);toast('방문 순서를 변경했어요 · 지도 반영','nav');};
+    row.onclick=()=>push('detail',{id:row.dataset.voc});
+  });
+}
+
+/* ---- Alerts ---- */
+VIEWS.alerts=()=>{
+  const items=[
+    {i:'warn',c:'#FF8494',t:'긴급 VOC 배정',d:'그랜드약국 · PC에서 일부 안보임',time:'방금',id:'V-26061007'},
+    {i:'ai',c:'var(--primary)',t:'AI 진단 준비 완료',d:'코너어린이집 본체점검 가이드가 생성됐어요',time:'5분 전',id:'V-26061006'},
+    {i:'clock',c:'#FFC24D',t:'방문 예정 알림',d:'노을짐 · 오늘 15:00 방문 예정',time:'12분 전',id:'V-26061013'},
+    {i:'msg',c:'#84AEFF',t:'고객 응답 도착',d:'"지금 확인 가능한가요?" · 라온마트',time:'32분 전',id:'V-26061004'},
+    {i:'check',c:'var(--ok)',t:'VOC 완료 처리됨',d:'알찬의원 · 카메라 점검 완료',time:'1시간 전',id:'V-26061003'}
+  ];
+  return `
+<div class="hdr" style="padding-top:14px"><div style="flex:1"><h1>알림</h1><div class="sub">읽지 않음 3건</div></div><span class="chip">모두 읽음</span></div>
+<div class="scroll"><div style="padding:0 20px" class="stagger">
+  ${items.map((n,i)=>`
+    <div class="card" ${n.id?`data-voc="${n.id}"`:''} style="cursor:${n.id?'pointer':'default'};margin-bottom:11px;animation-delay:${.04+i*.06}s;display:flex;gap:13px;align-items:flex-start;${i<3?'border-color:var(--line2)':''}">
+      <div style="width:40px;height:40px;border-radius:12px;background:var(--surface3);color:${n.c};display:grid;place-items:center;flex:none">${ic(n.i,20)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:800;font-size:14px">${n.t}</span><span class="tiny muted" style="flex:none">${n.time}</span></div>
+        <div class="tiny muted" style="margin-top:3px;line-height:1.5">${n.d}</div>
+      </div>
+      ${i<3?'<span class="dot" style="color:var(--primary);flex:none;margin-top:6px"></span>':''}
+    </div>`).join('')}
+</div></div>`;
+};
+
+/* ---- My ---- */
+VIEWS.my=()=>`
+<div class="hdr" style="padding-top:14px"><div style="flex:1"><h1>마이</h1></div></div>
+<div class="scroll"><div style="padding:0 20px" class="stagger">
+  <div class="card g" style="animation-delay:.04s;border-color:var(--line2);display:flex;gap:15px;align-items:center">
+    <div class="avatar" style="width:60px;height:60px;font-size:22px;background:var(--grad);color:#fff">CS</div>
+    <div><div style="font-weight:850;font-size:19px">${USER.name}</div><div class="tiny muted" style="margin-top:2px">강남지사</div></div>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:14px;animation-delay:.1s">
+    <div class="card" style="flex:1;text-align:center;padding:16px"><div class="big numm" style="font-size:24px">142</div><div class="tiny muted">이번 달 처리</div></div>
+    <div class="card" style="flex:1;text-align:center;padding:16px"><div class="big" style="font-size:24px">96%</div><div class="tiny muted">해결률</div></div>
+    <div class="card" style="flex:1;text-align:center;padding:16px"><div class="big" style="font-size:24px">18분</div><div class="tiny muted">평균 처리</div></div>
+  </div>
+  <div class="section-t" style="margin-left:2px">조치 환경 설정</div>
+  <div class="card" style="padding:6px 16px;animation-delay:.16s">
+    <div class="kv" style="align-items:center"><div><div style="font-weight:700;font-size:14px">AI 가이드 기본 사용</div><div class="tiny muted">VOC 조치 시작 시 기본값</div></div><div class="sw ${USER.aiDefault?'on':''}" data-setting="ai"><i></i></div></div>
+    <div class="kv" style="align-items:center"><div><div style="font-weight:700;font-size:14px">음성 입력 사용</div><div class="tiny muted">현장 소음 자동 보정</div></div><div class="sw on" data-setting="voice"><i></i></div></div>
+    <div class="kv" style="align-items:center;border:none"><div><div style="font-weight:700;font-size:14px">숙련자 모드</div><div class="tiny muted">SKIP·빠른 완료 우선 노출</div></div><div class="sw ${USER.seniorMode?'on':''}" data-setting="senior"><i></i></div></div>
+  </div>
+  <div class="section-t" style="margin-left:2px">알림</div>
+  <div class="card" style="padding:6px 16px;animation-delay:.22s">
+    <div class="kv" style="align-items:center"><div style="font-weight:700;font-size:14px">신규 VOC 푸시</div><div class="sw on" data-setting="p1"><i></i></div></div>
+    <div class="kv" style="align-items:center;border:none"><div style="font-weight:700;font-size:14px">긴급 VOC 알림</div><div class="sw on" data-setting="p2"><i></i></div></div>
+  </div>
+  <div style="text-align:center;margin-top:26px;animation-delay:.28s"><span class="tiny muted">에스원 Answer v1.0.0 · 프로토타입</span></div>
+</div><div style="height:20px"></div></div>`;
+
+/* =========================================================
+   Bottom sheets
+   ========================================================= */
+function openSheet(html){const s=$("#sheet");s.classList.remove('show');s.innerHTML='<div class="grab"></div>'+html;$("#scrim").classList.add('show');void s.offsetWidth;s.classList.add('show');}
+
+// AI가 분석·고민하는 인터스티셜 (단계별 체크 후 onDone)
+function aiThink(cfg){
+  var steps=cfg.steps||[], title=cfg.title||'AI가 분석하고 있어요', sub=cfg.sub||'잠시만요, 최적의 방법을 찾고 있어요';
+  var ov=document.getElementById('aiov');
+  if(!ov){ov=document.createElement('div');ov.id='aiov';ov.className='aiov';document.querySelector('.phone').appendChild(ov);}
+  ov.innerHTML='<div class="aiov-orb">'+ic('ai',42)+'</div><div class="aiov-title">'+title+'</div><div class="aiov-sub">'+sub+'</div>'
+    +'<div class="aiov-steps">'+steps.map(function(s,i){return '<div class="aiov-step" data-i="'+i+'"><span class="aiov-ic"><span class="aiov-spin"></span></span><span style="font-size:13.5px;font-weight:600">'+s+'</span></div>';}).join('')+'</div>';
+  void ov.offsetWidth; ov.classList.add('show');
+  var rows=ov.querySelectorAll('.aiov-step'), i=0, per=cfg.per||360;
+  function tick(){
+    if(i>0){var p=rows[i-1];p.querySelector('.aiov-ic').innerHTML=ic('check',15,3.2);}
+    if(i<rows.length){rows[i].classList.add('on');i++;setTimeout(tick,per);}
+    else setTimeout(function(){ov.classList.remove('show');if(cfg.onDone)cfg.onDone();},300);
+  }
+  tick();
+}
+function closeSheet(){$("#sheet").classList.remove('show');$("#scrim").classList.remove('show');}
+$("#scrim").addEventListener('click',closeSheet);
+
+function sheetSchedule(id){
+  const v=VOCS.find(x=>x.id===id);
+  const times=['오늘 13:20','오늘 14:00','오늘 15:30','오늘 16:40','내일 오전'];
+  openSheet(`
+    <div style="font-size:19px;font-weight:850">방문 일정 캘린더</div>
+    <div class="tiny muted" style="margin-top:3px;margin-bottom:16px">${v.company} · ${v.contact}</div>
+    <div class="tiny muted" style="font-weight:700;margin-bottom:8px">방문 예정 시간</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px" id="timePick">
+      ${times.map((t,i)=>`<span class="chip ${t===v.reserve?'on':''}" data-time="${t}" style="cursor:pointer;padding:9px 13px">${t}</span>`).join('')}
+    </div>
+    <div class="tiny muted" style="font-weight:700;margin:18px 0 8px">조율 상태</div>
+    <div style="display:flex;gap:8px" id="schState">
+      <span class="chip on" data-state="방문 확정" style="cursor:pointer;flex:1;justify-content:center;padding:11px">방문 확정</span>
+      <span class="chip" data-state="고객 부재" style="cursor:pointer;flex:1;justify-content:center;padding:11px">고객 부재</span>
+      <span class="chip" data-state="재조율" style="cursor:pointer;flex:1;justify-content:center;padding:11px">재조율</span>
+    </div>
+    <textarea class="ta" id="callMemo" rows="2" style="margin-top:16px" placeholder="통화 메모 (예: 오후 4시 이후 가능)"></textarea>
+    <button class="btn" style="margin-top:16px" data-savesch="${id}">일정 저장</button>
+  `);
+  const sh=$("#sheet");
+  let time=v.reserve, state='방문 확정';
+  sh.querySelectorAll('[data-time]').forEach(c=>c.onclick=()=>{sh.querySelectorAll('[data-time]').forEach(x=>x.classList.remove('on'));c.classList.add('on');time=c.dataset.time;});
+  sh.querySelectorAll('[data-state]').forEach(c=>c.onclick=()=>{sh.querySelectorAll('[data-state]').forEach(x=>x.classList.remove('on'));c.classList.add('on');state=c.dataset.state;});
+  sh.querySelector('[data-savesch]').onclick=()=>{STATE[id].schedule={time,state};closeSheet();toast(state+' · '+time+' 저장됨','clock');};
+}
+function sheetSms(id){
+  const v=VOCS.find(x=>x.id===id);
+  const tmpls=[
+    `[에스원] 안녕하세요, ${v.contact}님. 보안장비 점검을 위해 ${v.reserve} 방문 예정입니다. 확인 부탁드립니다.`,
+    `[에스원] 이전 일정 지연으로 방문 시간이 조정될 수 있습니다. 가능 시간 회신 부탁드립니다.`,
+    `[에스원] 점검이 완료되었습니다. 추가 이상 발생 시 언제든 연락 주세요. 감사합니다.`
+  ];
+  openSheet(`
+    <div style="font-size:19px;font-weight:850">문자 보내기</div>
+    <div class="tiny muted" style="margin-top:3px;margin-bottom:16px">${v.phone} · ${v.contact}</div>
+    <div class="tiny muted" style="font-weight:700;margin-bottom:8px">템플릿 선택</div>
+    ${tmpls.map((t,i)=>`<div class="card smsT" data-msg="${t.replace(/"/g,'&quot;')}" style="cursor:pointer;padding:14px;margin-bottom:9px;font-size:13.5px;line-height:1.5">${t}</div>`).join('')}
+    <div class="tiny muted" style="text-align:center;margin-top:6px">탭하면 문자앱으로 전달돼요 (프로토타입)</div>
+  `);
+  $("#sheet").querySelectorAll('.smsT').forEach(c=>c.onclick=()=>{closeSheet();toast('문자앱으로 전달했어요','msg');});
+}
+function sheetVoice(id,onDone){
+  openSheet(`
+    <div style="font-size:19px;font-weight:850;text-align:center">음성으로 결과 입력</div>
+    <div class="tiny muted" style="text-align:center;margin-top:4px">말씀하시면 자동으로 텍스트로 변환돼요</div>
+    <div class="mic" style="margin-top:22px">${ic('mic',34,2.2)}</div>
+    <div class="wave" id="wave">${Array.from({length:13}).map((_,i)=>`<i style="animation-delay:${i*.08}s"></i>`).join('')}</div>
+    <div class="tiny" style="text-align:center;color:var(--primary);font-weight:700">● 녹음 중… 듣고 있어요</div>
+    <div class="card" style="margin-top:18px;min-height:72px">
+      <div class="tiny muted" style="font-weight:700;margin-bottom:6px">실시간 변환</div>
+      <div id="vtext" style="font-size:14.5px;line-height:1.55;min-height:22px"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn ghost" style="flex:1" id="vcancel">취소</button>
+      <button class="btn" style="flex:1.4" id="vsave" disabled>${ic('check',16)} 변환 완료 · 입력</button>
+    </div>
+  `);
+  // 현재 VOC(접수코드·선택 원인)에 맞는 조치결과를 음성 변환 결과로 생성
+  const _v=VOCS.find(x=>x.id===id); const _grps=_v?dxGroupsOf(_v.code):[];
+  let sample;
+  const _st=STATE[id];
+  if(_st && _st.causes && _st.causes.length){
+    var _seen2={};
+    sample=_st.causes.map(function(k){return _grps[k]?polishResult(_grps[k].rs[0]):'';}).filter(function(x){if(!x||_seen2[x])return false;_seen2[x]=1;return true;}).join(' ');
+  } else if(_grps.length){
+    var gi=_v.id.charCodeAt(_v.id.length-1)%_grps.length;   // VOC마다 다른 대표 조치결과
+    sample=polishResult(_grps[gi].rs[0]);
+  } else {
+    sample='현장 점검 후 정상 조치 완료했습니다.';
+  }
+  const vt=$("#vtext");let i=0;
+  const timer=setInterval(()=>{
+    i+=1;vt.textContent=sample.slice(0,i);
+    if(i>=sample.length){clearInterval(timer);$("#vsave").disabled=false;$("#vsave").classList.add('grad');document.querySelector('.mic').style.animation='none';document.querySelector('#wave').style.opacity=.3;}
+  },42);
+  $("#vcancel").onclick=()=>{clearInterval(timer);closeSheet();};
+  $("#vsave").onclick=()=>{clearInterval(timer);closeSheet();onDone(sample);};
+}
+
+/* =========================================================
+   Event binding per screen
+   ========================================================= */
+function bindScreen(el,name,params){
+  // universal
+  el.querySelectorAll('[data-voc]').forEach(n=>n.onclick=e=>{e.stopPropagation();push('detail',{id:n.dataset.voc});});
+  el.querySelectorAll('.back').forEach(n=>n.onclick=()=>back());
+  el.querySelectorAll('[data-call]').forEach(n=>n.onclick=e=>{e.stopPropagation();haptic(n);toast('전화 연결 중…<br>'+n.dataset.call,'phone');});
+  el.querySelectorAll('[data-nav]').forEach(n=>n.onclick=e=>{e.stopPropagation();haptic(n);push('navi',{id:n.dataset.nav});});
+  el.querySelectorAll('[data-startnav]').forEach(n=>n.onclick=e=>{e.stopPropagation();haptic(n);toast('실시간 길안내를 시작합니다','nav');});
+  el.querySelectorAll('[data-sms]').forEach(n=>n.onclick=e=>{e.stopPropagation();sheetSms(n.dataset.sms);});
+  el.querySelectorAll('[data-schedule]').forEach(n=>n.onclick=e=>{e.stopPropagation();sheetSchedule(n.dataset.schedule);});
+  el.querySelectorAll('[data-tab]').forEach(n=>n.onclick=e=>{e.stopPropagation();switchTab(n.dataset.tab);});
+  el.querySelectorAll('[data-home]').forEach(n=>n.onclick=()=>switchTab('home'));
+  el.querySelectorAll('.sw').forEach(sw=>{if(!sw.dataset.bound){sw.dataset.bound=1;sw.onclick=()=>sw.classList.toggle('on');}});
+
+  // animated counters + tracks
+  el.querySelectorAll('[data-count]').forEach(n=>{const to=+n.dataset.count;let c=0;const step=Math.max(1,Math.ceil(to/22));const t=setInterval(()=>{c+=step;if(c>=to){c=to;clearInterval(t);}n.textContent=c;},32);});
+  setTimeout(()=>el.querySelectorAll('[data-w]').forEach(n=>n.style.width=n.dataset.w),200);
+
+  if(name==='login'){$("#loginBtn").onclick=()=>{haptic($("#loginBtn"));toast('인증 완료','check');setTimeout(()=>{switchTab('home');},500);};}
+
+  if(name==='vocList'){
+    el.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>resetTo('vocList',{filter:b.dataset.filter}));
+    // skeleton then real
+    const body=el.querySelector('#vocListBody');const real=el.querySelector('#vocListReal');
+    body.innerHTML=Array.from({length:4}).map(()=>`<div class="card" style="margin-bottom:12px"><div class="skel" style="height:14px;width:40%"></div><div class="skel" style="height:44px;width:100%;margin-top:14px;border-radius:12px"></div><div class="skel" style="height:12px;width:60%;margin-top:12px"></div></div>`).join('');
+    setTimeout(()=>{body.style.display='none';real.style.display='block';bindScreen(real,'_cards',{});},650);
+  }
+
+  if(name==='detail'){
+    el.querySelectorAll('[data-aidirect]').forEach(b=>b.onclick=()=>{
+      const id=b.dataset.id, mode=b.dataset.aidirect;
+      STATE[id].aiMode=mode; STATE[id].cause=null; STATE[id].causes=[]; STATE[id].result='';
+      haptic(b);
+      if(mode==='use') aiThink({title:'AI가 진단하고 있어요',sub:'접수 내용과 기기 매뉴얼을 분석 중이에요',steps:['접수 내용 분석','기기 매뉴얼 대조','과거 이력 확인','유사 조치 사례 검색','진단 항목 도출'],per:340,onDone:function(){push('diagnose',{id});}});
+      else push('result',{id});
+    });
+    el.querySelectorAll('[data-view-result]').forEach(n=>n.onclick=()=>push('result',{id:n.dataset.viewResult}));
+  }
+
+  if(name==='aiToggle'){
+    el.querySelectorAll('[data-ai]').forEach(c=>c.onclick=()=>{
+      const id=c.dataset.id;STATE[id].aiMode=c.dataset.ai;haptic(c);
+      if(c.dataset.ai==='use')push('diagnose',{id});
+      else{ // skip → straight to result with voice/text
+        STATE[id].result='';push('result',{id});
+      }
+    });
+  }
+
+  if(name==='route'){ renderRoute(el); }
+
+  if(name==='navi'){
+    const path=el.querySelector('#route');const car=el.querySelector('.car');
+    if(path&&car){
+      const len=path.getTotalLength();const N=64;const frames=[];
+      for(let i=0;i<=N;i++){
+        const d=len*i/N;const p=path.getPointAtLength(d);
+        const p2=path.getPointAtLength(Math.min(len,d+0.6));
+        const ang=Math.atan2(p2.y-p.y,p2.x-p.x)*180/Math.PI+90;
+        frames.push({transform:`translate(${p.x.toFixed(2)}px,${p.y.toFixed(2)}px) rotate(${ang.toFixed(1)}deg)`});
+      }
+      try{car.animate(frames,{duration:7000,iterations:Infinity,easing:'linear'});}catch(e){}
+    }
+  }
+
+  if(name==='diagnose'){
+    // 가이드 없는 유형: 바로 직접 결과 입력
+    el.querySelectorAll('[data-noguide]').forEach(n=>n.onclick=()=>{const id=n.dataset.noguide;STATE[id].cause=null;STATE[id].result='';haptic(n);push('result',{id});});
+    const sel=new Set();const btn=el.querySelector('#toGuide');const nEl=el.querySelector('#dxN');
+    if(btn){
+      el.querySelectorAll('[data-dx]').forEach(c=>c.onclick=()=>{
+        const i=+c.dataset.dx;
+        if(sel.has(i)){sel.delete(i);c.classList.remove('sel');}else{sel.add(i);c.classList.add('sel');}
+        btn.disabled=sel.size===0;
+        if(nEl)nEl.textContent=sel.size?`(${sel.size})`:'';
+        haptic(c);
+      });
+      btn.onclick=()=>{if(!sel.size)return;
+        STATE[params.id].causes=[...sel].sort((a,b)=>a-b);
+        aiThink({title:'AI가 조치 방법을 정리하고 있어요',sub:'선택한 증상에 맞는 조치 순서를 구성 중이에요',steps:['선택한 증상 분석','매뉴얼 조치 절차 매칭','중복 조치 정리','최적 순서 도출'],per:360,onDone:function(){push('guide',{id:params.id});}});
+      };
+    }
+  }
+
+  if(name==='guide'){
+    const steps=[...el.querySelectorAll('.gstep')];const done=new Set();const btn=el.querySelector('#toResult');
+    steps.forEach(s=>s.onclick=()=>{
+      const i=+s.dataset.step;const sn=s.querySelector('.snum');
+      if(done.has(i)){done.delete(i);sn.style.background='var(--surface3)';sn.style.color='var(--muted)';sn.textContent=i+1;s.style.borderColor='var(--line)';}
+      else{done.add(i);sn.style.background='var(--grad-mint)';sn.style.color='#04121a';sn.innerHTML=ic('check',16,3.2);s.style.borderColor='rgba(34,197,140,.4)';haptic(s);}
+    });
+    el.querySelectorAll('[data-reguide]').forEach(n=>n.onclick=()=>back());
+    btn.onclick=()=>{STATE[params.id].actionDone=true;STATE[params.id].result='';push('result',{id:params.id});};
+  }
+
+  if(name==='result'){
+    const id=params.id;const ta=el.querySelector('#resultTa');const st=STATE[id];
+    ta.oninput=()=>st.result=ta.value;
+    // 자동 작성 결과 타이핑 효과
+    if(ta.dataset.type==='1'){ setTimeout(()=>typeInto(ta, st.result, 22), 260); }
+    el.querySelectorAll('[data-quick]').forEach(c=>c.onclick=()=>{if(ta._finish)ta._finish();ta.value=(ta.value?ta.value+' ':'')+c.dataset.quick;st.result=ta.value;ta.focus();});
+    el.querySelectorAll('[data-voice]').forEach(c=>c.onclick=()=>{if(ta._finish)ta._finish();sheetVoice(id,txt=>{ta.value=(ta.value?ta.value+' ':'')+txt;st.result=ta.value;toast('음성 변환 완료','mic');});});
+    el.querySelectorAll('[data-status]').forEach(c=>c.onclick=()=>{el.querySelectorAll('[data-status]').forEach(x=>x.classList.remove('on'));c.classList.add('on');st.compStatus=c.dataset.status;});
+    el.querySelectorAll('[data-flag]').forEach(sw=>sw.onclick=()=>sw.classList.toggle('on'));
+    const cb=el.querySelector('#complete');
+    cb.onclick=()=>{
+      if(ta._finish)ta._finish();
+      st.result=ta.value.trim();
+      if(!st.result){toast('조치 결과를 입력해주세요','warn');ta.focus();ta.style.borderColor='var(--danger)';return;}
+      st.completed=true;haptic(cb);push('done',{id});
+    };
+    // if skip mode & empty, auto-offer voice
+    if(st.aiMode==='skip' && !st.result){setTimeout(()=>{if(stack[stack.length-1].name==='result')sheetVoice(id,txt=>{ta.value=txt;st.result=txt;toast('음성 변환 완료','mic');});},550);}
+  }
+}
+
+/* =========================================================
+   Tab bar
+   ========================================================= */
+function renderTabs(){
+  const tb=$("#tabbar");
+  const rootNames=['home','vocList','route','alerts','my'];
+  const cur=stack[stack.length-1];
+  const showTab = cur && rootNames.includes(cur.name);
+  if(!showTab || cur.name==='login'){tb.innerHTML='';return;}
+  const tabs=[['home','홈','home'],['voc','VOC','list'],['route','동선','route'],['alerts','알림','bell'],['my','마이','user']];
+  tb.className='tabbar';
+  tb.innerHTML=tabs.map(([k,t,i])=>`<div class="tab ${activeTab===k?'on':''}" data-t="${k}">${k==='alerts'?'<span class="badge-n">3</span>':''}<span class="ti">${ic(i,23,2)}</span>${t}</div>`).join('');
+  tb.querySelectorAll('[data-t]').forEach(n=>n.onclick=()=>{haptic(n);switchTab(n.dataset.t);});
+}
+
+/* =========================================================
+   Boot
+   ========================================================= */
+(function boot(){
+  resetTo('login');
+  // login has no tab
+  const tb=$("#tabbar");tb.className='';tb.innerHTML='';
+  try{const now=new Date();/* clock may be blocked in some envs */}catch(e){}
+})();
+</script>
+</body>
+</html>

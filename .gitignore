@@ -1,0 +1,11 @@
+# 원본 데이터 (고객/직원 정보 포함 — 공개 저장소에 올리지 않음)
+*.xlsx
+*.csv
+
+# 로컬 개발 설정
+.claude/
+
+# OS / 기타
+Thumbs.db
+.DS_Store
+*.log
