@@ -2510,10 +2510,14 @@ function renderTabs(){
   try{const now=new Date();/* clock may be blocked in some envs */}catch(e){}
 })();
 
-/* PWA 서비스워커 등록 */
+/* PWA 서비스워커 등록 + 새 버전 자동 갱신 */
 if('serviceWorker' in navigator){
+  var _swReloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(_swReloaded)return; _swReloaded=true; location.reload();
+  });
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
+    navigator.serviceWorker.register('sw.js').then(function(reg){ reg.update&&reg.update(); }).catch(function(){});
   });
 }
 </script>
