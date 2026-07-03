@@ -266,7 +266,10 @@ textarea,input{font-family:inherit;}
 
 /* 무한대(∞) 브랜드 로고 — 빛이 계속 흐름 */
 .logoTile{width:92px;height:92px;border-radius:26px;background:#fff;display:grid;place-items:center;margin:0 auto;box-shadow:0 22px 55px -12px rgba(46,123,246,.5),0 0 0 1px rgba(255,255,255,.08);animation:tileFloat 4.8s ease-in-out infinite;}
-.logoImg{width:168px;max-width:62%;height:auto;display:block;margin:0 auto;animation:tileFloat 4.8s ease-in-out infinite;filter:drop-shadow(0 22px 44px rgba(46,123,246,.4));}
+.brandLogo{width:200px;max-width:66%;height:auto;display:block;margin:0 auto;overflow:visible;animation:tileFloat 4.8s ease-in-out infinite;}
+.brandLogo .flow{animation:brandFlow 2.6s linear infinite;}
+@keyframes brandFlow{to{stroke-dashoffset:-100;}}
+.brandMini{width:34px;height:22px;overflow:visible;flex:none;}
 @keyframes tileFloat{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-10px) rotate(-1.5deg);}}
 .inf{width:56px;height:36px;overflow:visible;}
 .inf .base{fill:none;stroke:url(#infg);stroke-width:9.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 5px rgba(46,123,246,.3));}
@@ -322,6 +325,7 @@ textarea,input{font-family:inherit;}
     <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
       <linearGradient id="infg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E7BF6"/><stop offset=".55" stop-color="#1FC6C0"/><stop offset="1" stop-color="#25C56A"/></linearGradient>
       <linearGradient id="infg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E7BF6"/><stop offset="1" stop-color="#25C56A"/></linearGradient>
+      <filter id="brandShadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#1746c9" flood-opacity="0.55"/></filter>
     </defs></svg>
     <div class="app">
       <div class="statusbar">
@@ -1644,7 +1648,12 @@ const VIEWS={};
 VIEWS.login=()=>`
 <div class="scroll" style="display:flex;flex-direction:column;justify-content:center;padding:0 30px;text-align:center;">
   <div class="reveal" style="animation-delay:.05s;margin-bottom:18px">
-    <img src="logo-clean.png" alt="에스원 Answer" class="logoImg" />
+    <svg class="brandLogo" viewBox="0 0 200 130" fill="none" aria-label="에스원 Answer">
+      <g filter="url(#brandShadow)">
+        <path pathLength="100" d="M100 65 C100 25 40 25 40 65 C40 105 100 105 100 65 C100 25 160 25 160 65 C160 105 100 105 100 65 Z" stroke="url(#infg)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <path class="flow" pathLength="100" d="M100 65 C100 25 40 25 40 65 C40 105 100 105 100 65 C100 25 160 25 160 65 C160 105 100 105 100 65 Z" stroke="#EAFEFF" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15 85" opacity=".9"/>
+    </svg>
   </div>
   <div class="reveal" style="animation-delay:.12s">
     <div style="font-size:36px;font-weight:850;letter-spacing:-.02em;margin-bottom:12px">에스원 <span class="numg" style="font-weight:900">Answer</span></div>
@@ -1675,7 +1684,7 @@ VIEWS.home=()=>{
   return `
 <div class="scroll">
   <div style="display:flex;align-items:center;gap:7px;padding:14px 20px 0">
-    <img src="logo-clean.png" alt="" style="width:32px;height:32px;object-fit:contain;flex:none" />
+    <svg class="brandMini" viewBox="0 0 200 130" fill="none" aria-hidden="true"><path pathLength="100" d="M100 65 C100 25 40 25 40 65 C40 105 100 105 100 65 C100 25 160 25 160 65 C160 105 100 105 100 65 Z" stroke="url(#infg2)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span style="font-weight:800;font-size:27px;letter-spacing:-.01em">에스원 <span class="numg" style="font-weight:900">Answer</span></span>
   </div>
   <div class="hdr" style="padding-top:8px">
