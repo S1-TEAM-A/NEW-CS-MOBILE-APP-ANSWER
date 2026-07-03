@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#070B16" />
 <title>에스원 Answer — 현장 CS 앱</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="favicon.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="에스원 Answer" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 <style>
@@ -259,6 +266,7 @@ textarea,input{font-family:inherit;}
 
 /* 무한대(∞) 브랜드 로고 — 빛이 계속 흐름 */
 .logoTile{width:92px;height:92px;border-radius:26px;background:#fff;display:grid;place-items:center;margin:0 auto;box-shadow:0 22px 55px -12px rgba(46,123,246,.5),0 0 0 1px rgba(255,255,255,.08);animation:tileFloat 4.8s ease-in-out infinite;}
+.logoImg{width:168px;max-width:62%;height:auto;display:block;margin:0 auto;animation:tileFloat 4.8s ease-in-out infinite;filter:drop-shadow(0 22px 44px rgba(46,123,246,.4));}
 @keyframes tileFloat{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-10px) rotate(-1.5deg);}}
 .inf{width:56px;height:36px;overflow:visible;}
 .inf .base{fill:none;stroke:url(#infg);stroke-width:9.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 5px rgba(46,123,246,.3));}
@@ -1635,13 +1643,8 @@ const VIEWS={};
 /* ---- Splash / Login ---- */
 VIEWS.login=()=>`
 <div class="scroll" style="display:flex;flex-direction:column;justify-content:center;padding:0 30px;text-align:center;">
-  <div class="reveal" style="animation-delay:.05s;margin-bottom:22px">
-    <div class="logoTile">
-      <svg class="inf" viewBox="0 0 100 60">
-        <path class="base" d="M50 30 C50 10 20 10 20 30 C20 50 50 50 50 30 C50 10 80 10 80 30 C80 50 50 50 50 30 Z"/>
-        <path class="flow" d="M50 30 C50 10 20 10 20 30 C20 50 50 50 50 30 C50 10 80 10 80 30 C80 50 50 50 50 30 Z"/>
-      </svg>
-    </div>
+  <div class="reveal" style="animation-delay:.05s;margin-bottom:18px">
+    <img src="logo.gif" alt="에스원 Answer" class="logoImg" />
   </div>
   <div class="reveal" style="animation-delay:.12s">
     <div style="font-size:36px;font-weight:850;letter-spacing:-.02em;margin-bottom:12px">에스원 <span class="numg" style="font-weight:900">Answer</span></div>
@@ -1672,7 +1675,7 @@ VIEWS.home=()=>{
   return `
 <div class="scroll">
   <div style="display:flex;align-items:center;gap:7px;padding:14px 20px 0">
-    <svg class="infMini" viewBox="0 0 100 60"><path d="M50 30 C50 10 20 10 20 30 C20 50 50 50 50 30 C50 10 80 10 80 30 C80 50 50 50 50 30 Z"/></svg>
+    <img src="logo.gif" alt="" style="width:32px;height:32px;object-fit:contain;flex:none" />
     <span style="font-weight:800;font-size:27px;letter-spacing:-.01em">에스원 <span class="numg" style="font-weight:900">Answer</span></span>
   </div>
   <div class="hdr" style="padding-top:8px">
@@ -2497,6 +2500,13 @@ function renderTabs(){
   const tb=$("#tabbar");tb.className='';tb.innerHTML='';
   try{const now=new Date();/* clock may be blocked in some envs */}catch(e){}
 })();
+
+/* PWA 서비스워커 등록 */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 </script>
 </body>
 </html>

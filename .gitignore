@@ -5,6 +5,9 @@
 # 로컬 개발 설정
 .claude/
 
+# 로고 원본(브라우저 저장본) — 웹용은 logo.gif 사용
+logo.png.gif
+
 # OS / 기타
 Thumbs.db
 .DS_Store
