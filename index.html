@@ -14,6 +14,8 @@
 <meta name="apple-mobile-web-app-title" content="에스원 Answer" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 /* =========================================================
    OnSite CS — Design System
@@ -286,6 +288,15 @@ textarea,input{font-family:inherit;}
 
 /* ============ 길찾기 · 내비게이션 ============ */
 .navmap{position:absolute;inset:0;width:100%;height:100%;z-index:0;}
+/* Leaflet 지도 (키 없이 OSM) */
+.leafmap{height:260px;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#0a1322;}
+.leafmini{height:150px;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#0a1322;}
+.leaflet-container{background:#e6ebf0;font-family:inherit;}
+.leaflet-popup-content-wrapper{background:var(--surface2);color:var(--text);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.leaflet-popup-tip{background:var(--surface2);}
+.leaflet-popup-content{margin:9px 12px;font-size:12.5px;line-height:1.5;}
+.leaflet-bar a{background:var(--surface2);color:var(--text);border-color:var(--line);}
+.leaflet-bar a:hover{background:var(--surface3);}
 .route-line{stroke:#25C56A;stroke-width:4.5;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(37,197,106,.8));stroke-dasharray:100;stroke-dashoffset:100;animation:routeDraw 1.5s .15s cubic-bezier(.4,0,.2,1) forwards;}
 @keyframes routeDraw{to{stroke-dashoffset:0;}}
 .route-flow{stroke:#EAFFF5;stroke-width:4.5;fill:none;stroke-linecap:round;stroke-dasharray:5 95;stroke-dashoffset:0;opacity:.95;animation:flowDash 2.6s linear infinite;}
@@ -658,6 +669,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "고현석",
+  "received": "2026.06.09 08:35:16",
   "urgency": "mid",
   "sla": 1.5,
   "status": "new",
@@ -689,6 +701,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "고현석",
+  "received": "2026.06.01 16:34:32",
   "urgency": "high",
   "sla": 8,
   "status": "done",
@@ -719,10 +732,11 @@ const VOC_POOL = [
   "y": 28,
   "phone": "010-2074-3106",
   "contact": "류서연 담당자",
-  "symptom": "애들이 문을 세게 닫아서 그런건지 본관 문에 설치된 센서가 망가져서 경비가 안된다.",
+  "symptom": "애들이 문을 세게 닫아서 그런건지 본관 문에 설치된 센서가 망가져서 경비가 안된다. 문시건은 하고 퇴근 하는데 경비 안된것 센서 망가졋 그런거니 참고해달라. 지금은 퇴근하니 내일 오셔서 점검 해달라.",
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김재룡",
+  "received": "2026.06.09 16:50:33",
   "urgency": "low",
   "sla": 2,
   "status": "done",
@@ -757,6 +771,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김경민",
+  "received": "2026.06.11 15:36:16",
   "urgency": "low",
   "sla": 2,
   "status": "done",
@@ -791,6 +806,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.11 22:13:58",
   "urgency": "low",
   "sla": 8,
   "status": "scheduled",
@@ -822,6 +838,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "진재혁",
+  "received": "2026.06.12 15:19:13",
   "urgency": "low",
   "sla": 2,
   "status": "done",
@@ -856,6 +873,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.13 08:14:21",
   "urgency": "mid",
   "sla": 2,
   "status": "new",
@@ -896,6 +914,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.15 08:18:13",
   "urgency": "low",
   "sla": 8,
   "status": "new",
@@ -932,6 +951,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.15 08:22:37",
   "urgency": "low",
   "sla": 4,
   "status": "new",
@@ -959,10 +979,11 @@ const VOC_POOL = [
   "y": 77,
   "phone": "010-2333-3477",
   "contact": "임지원 담당자",
-  "symptom": "공방 우측 문이 안되어있다고 뜨면서 잠금이 안되더라. 메세지가 뜨면서 어제 저녁부터 경비랑 재택이 전혀 안된다.",
+  "symptom": "공방 우측 문이 안되어있다고 뜨면서 잠금이 안되더라. 메세지가 뜨면서 어제 저녁부터 경비랑 재택이 전혀 안된다. 그쪽 방에 락이 4곳인가 있는데 다 닫아도 안된다. 오전에도 잠금을 못하고 나갔다왔다. 빠른확인해달라.",
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.21 12:02:16",
   "urgency": "mid",
   "sla": 1.5,
   "status": "new",
@@ -994,6 +1015,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.23 09:36:48",
   "urgency": "mid",
   "sla": 2,
   "status": "new",
@@ -1021,10 +1043,11 @@ const VOC_POOL = [
   "y": 19,
   "phone": "010-2407-3583",
   "contact": "서다은 담당자",
-  "symptom": "아까 새벽에 청소이모님이 에스원 잠금해제 지문을 카드를 찍으니까 그 때부터 파이어 등이 깜빡이고 있다고 한다.",
+  "symptom": "아까 새벽에 청소이모님이 에스원 잠금해제 지문을 카드를 찍으니까 그 때부터 파이어 등이 깜빡이고 있다고 한다. 그런데 내가 봤을땐 이상이 안 뜨는데 에스원 때문인건지 화재쪽 감지기가 이상한건지 헷갈려서요. (.",
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.24 08:12:45",
   "urgency": "mid",
   "sla": 8,
   "status": "new",
@@ -1052,10 +1075,11 @@ const VOC_POOL = [
   "y": 26,
   "phone": "010-2444-3636",
   "contact": "윤시우 담당자",
-  "symptom": "세콤 동작감지 관련으로 문의하고싶다. 이전에 학생들이 출입했을 때 동작감지가 안된적이 있다. 그 이후로 조치가 되었다고는 알고있다.",
+  "symptom": "세콤 동작감지 관련으로 문의하고싶다. 이전에 학생들이 출입했을 때 동작감지가 안된적이 있다. 그 이후로 조치가 되었다고는 알고있다. 그게 뭔가 강화할 수 있는건지 여쭤보고싶다.",
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.24 13:47:05",
   "urgency": "high",
   "sla": 2,
   "status": "done",
@@ -1090,6 +1114,7 @@ const VOC_POOL = [
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.24 14:19:17",
   "urgency": "low",
   "sla": 4,
   "status": "new",
@@ -1117,10 +1142,11 @@ const VOC_POOL = [
   "y": 40,
   "phone": "010-2518-3742",
   "contact": "권가온 담당자",
-  "symptom": "경비를 해놓은 상태에서 창문이 약간 열려있는 상태로 경비가 되면 혹시 경비 알림이 온다던가 그런지 해서요 (사유 여쭤보니) 내일부터 물놀이장…",
+  "symptom": "경비를 해놓은 상태에서 창문이 약간 열려있는 상태로 경비가 되면 혹시 경비 알림이 온다던가 그런지 해서요 (사유 여쭤보니) 내일부터 물놀이장을 하려고 하는데 전기를 건물 내에서 끌어다 쓰려고 창문이 약간 열려 있으면 경비가 안되는지 해서요.",
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.29 14:11:59",
   "urgency": "low",
   "sla": 8,
   "status": "scheduled",
@@ -1157,10 +1183,11 @@ const VOC_POOL = [
   "y": 47,
   "phone": "010-2555-3795",
   "contact": "강하윤 담당자",
-  "symptom": "화재수신기와 에스원하고 연결이 되어있는걸로 아는데 어제 발신기를 눌렀는데도 연락이 없더라 연결이 잘되어있는지 확인해달라 / 2차 010 20…",
+  "symptom": "화재수신기와 에스원하고 연결이 되어있는걸로 아는데 어제 발신기를 눌렀는데도 연락이 없더라 연결이 잘되어있는지 확인해달라 / 2차 010 2039 2667.",
   "memo": "감지기 상태 이상(단선/단락/오감지). 루프 선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김운섭",
+  "received": "2026.06.30 09:02:51",
   "urgency": "mid",
   "sla": 1.5,
   "status": "new",
@@ -1192,6 +1219,7 @@ const VOC_POOL = [
   "memo": "지문리더기 인식/액정 상태 불량. 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.09 13:56:29",
   "urgency": "high",
   "sla": 8,
   "status": "done",
@@ -1226,6 +1254,7 @@ const VOC_POOL = [
   "memo": "지문리더기 인식/액정 상태 불량. 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.18 10:22:02",
   "urgency": "high",
   "sla": 8,
   "status": "scheduled",
@@ -1257,6 +1286,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.29 09:36:58",
   "urgency": "low",
   "sla": 1.5,
   "status": "done",
@@ -1291,6 +1321,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "아이디스(A/S)",
   "worker": "아이디스 담당자",
+  "received": "2026.06.02 08:55:47",
   "urgency": "low",
   "sla": 1.5,
   "status": "new",
@@ -1318,10 +1349,11 @@ const VOC_POOL = [
   "y": 82,
   "phone": "010-2740-4060",
   "contact": "손서준 담당자",
-  "symptom": "카메라 하나가 안나와서 문의 글을 남겼는데 채팅이 왔어요. 처리일자가 6/3일로 되어있어요 밤 열한시삼십분에 와서 처리해 주겠다는건가요? 다…",
+  "symptom": "카메라 하나가 안나와서 문의 글을 남겼는데 채팅이 왔어요. 처리일자가 6/3일로 되어있어요 밤 열한시삼십분에 와서 처리해 주겠다는건가요? 다시 확인해주세요.",
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김운섭",
+  "received": "2026.06.02 14:41:16",
   "urgency": "low",
   "sla": 2,
   "status": "new",
@@ -1358,6 +1390,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.03 07:54:20",
   "urgency": "low",
   "sla": 1.5,
   "status": "new",
@@ -1389,6 +1422,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "진재혁",
+  "received": "2026.06.03 16:37:25",
   "urgency": "low",
   "sla": 2,
   "status": "new",
@@ -1429,6 +1463,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "박평종",
+  "received": "2026.06.04 08:46:47",
   "urgency": "high",
   "sla": 8,
   "status": "new",
@@ -1469,6 +1504,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김대록",
+  "received": "2026.06.04 12:53:57",
   "urgency": "low",
   "sla": 2,
   "status": "done",
@@ -1508,6 +1544,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김남조",
+  "received": "2026.06.05 09:22:22",
   "urgency": "low",
   "sla": 8,
   "status": "new",
@@ -1539,6 +1576,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김태호",
+  "received": "2026.06.06 13:35:38",
   "urgency": "high",
   "sla": 1.5,
   "status": "done",
@@ -1582,6 +1620,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "고현석",
+  "received": "2026.06.08 10:17:07",
   "urgency": "low",
   "sla": 8,
   "status": "new",
@@ -1618,6 +1657,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.09 07:28:32",
   "urgency": "low",
   "sla": 8,
   "status": "new",
@@ -1649,6 +1689,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김대록",
+  "received": "2026.06.09 19:10:45",
   "urgency": "high",
   "sla": 1.5,
   "status": "new",
@@ -1680,6 +1721,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.10 09:04:43",
   "urgency": "high",
   "sla": 2,
   "status": "done",
@@ -1710,10 +1752,11 @@ const VOC_POOL = [
   "y": 15,
   "phone": "010-3147-4643",
   "contact": "송민준 담당자",
-  "symptom": "모니터에 카메라가 카메라가 이제 나오는 것도 있고 안 나오는 것도 있어서요. 휴대폰은 잘 나와요. 근데 모니터가 안 나오네요.",
+  "symptom": "모니터에 카메라가 카메라가 이제 나오는 것도 있고 안 나오는 것도 있어서요. 휴대폰은 잘 나와요. 근데 모니터가 안 나오네요. 녹화기하고 연결돼 있어요. 모니터가 나가서 우리가 자비로 갈았어요 시간이 지나니까 새카메리고 잘안보이는데 모니터는 갈아주시는 건가요? 아니 우리가 갈아야 되는 건가요?",
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김대록",
+  "received": "2026.06.10 09:48:56",
   "urgency": "low",
   "sla": 2,
   "status": "new",
@@ -1754,6 +1797,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "정준희",
+  "received": "2026.06.10 10:58:02",
   "urgency": "low",
   "sla": 4,
   "status": "scheduled",
@@ -1785,6 +1829,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-영업",
   "worker": "전윤정",
+  "received": "2026.06.10 11:10:13",
   "urgency": "mid",
   "sla": 2,
   "status": "scheduled",
@@ -1816,6 +1861,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김태호",
+  "received": "2026.06.10 13:16:16",
   "urgency": "low",
   "sla": 2,
   "status": "new",
@@ -1847,6 +1893,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김경민",
+  "received": "2026.06.11 10:33:59",
   "urgency": "mid",
   "sla": 8,
   "status": "done",
@@ -1890,6 +1937,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김남조",
+  "received": "2026.06.12 12:40:11",
   "urgency": "low",
   "sla": 1.5,
   "status": "scheduled",
@@ -1921,6 +1969,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "박평종",
+  "received": "2026.06.12 13:36:31",
   "urgency": "low",
   "sla": 4,
   "status": "done",
@@ -1951,10 +2000,11 @@ const VOC_POOL = [
   "y": 64,
   "phone": "010-3406-5014",
   "contact": "백지민 담당자",
-  "symptom": "CCTV 카메라가 일곱 대가 고장이 났다. 모니터에 안나온다. 카메라가 언제부터 지금 고장이 났는지 언제부터 영상저장이 안됬는지 확인하고 a…",
+  "symptom": "CCTV 카메라가 일곱 대가 고장이 났다. 모니터에 안나온다. 카메라가 언제부터 지금 고장이 났는지 언제부터 영상저장이 안됬는지 확인하고 as계약서 보니까 cctv제외라고 되어있는데 금액이 어떻게 되는지 견적서도 받고싶다.",
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-영업",
   "worker": "오용석",
+  "received": "2026.06.12 15:03:26",
   "urgency": "low",
   "sla": 4,
   "status": "new",
@@ -1986,6 +2036,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.12 16:12:42",
   "urgency": "high",
   "sla": 8,
   "status": "scheduled",
@@ -2013,10 +2064,11 @@ const VOC_POOL = [
   "y": 78,
   "phone": "010-3480-5120",
   "contact": "박태경 담당자",
-  "symptom": "카메라 1대 안나옴 방문 점검 voc 카메라 4대중에서 1대가 나오지 않고 있다 (보는화면 ) 모니터와 휴대폰에서 보이지 않고 있다 (월요일…",
+  "symptom": "카메라 1대 안나옴 방문 점검 voc 카메라 4대중에서 1대가 나오지 않고 있다 (보는화면 ) 모니터와 휴대폰에서 보이지 않고 있다 (월요일방문 안내 ) 월요일은 출근이라 안된다 방문 하여 점검 해달라.",
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "박평종",
+  "received": "2026.06.13 09:18:01",
   "urgency": "low",
   "sla": 1.5,
   "status": "new",
@@ -2048,6 +2100,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "정준희",
+  "received": "2026.06.14 09:07:33",
   "urgency": "high",
   "sla": 2,
   "status": "scheduled",
@@ -2079,6 +2132,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김남조",
+  "received": "2026.06.15 09:13:02",
   "urgency": "mid",
   "sla": 2,
   "status": "done",
@@ -2118,6 +2172,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김남조",
+  "received": "2026.06.15 10:09:25",
   "urgency": "low",
   "sla": 8,
   "status": "new",
@@ -2158,6 +2213,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "정준희",
+  "received": "2026.06.15 11:13:50",
   "urgency": "mid",
   "sla": 2,
   "status": "new",
@@ -2189,6 +2245,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "고현석",
+  "received": "2026.06.15 15:39:15",
   "urgency": "low",
   "sla": 8,
   "status": "done",
@@ -2228,6 +2285,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "고현석",
+  "received": "2026.06.17 08:48:40",
   "urgency": "low",
   "sla": 1.5,
   "status": "new",
@@ -2259,6 +2317,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.17 12:36:16",
   "urgency": "mid",
   "sla": 4,
   "status": "done",
@@ -2293,6 +2352,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.18 11:37:11",
   "urgency": "mid",
   "sla": 2,
   "status": "scheduled",
@@ -2324,6 +2384,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김동석",
+  "received": "2026.06.18 13:06:37",
   "urgency": "high",
   "sla": 4,
   "status": "new",
@@ -2355,6 +2416,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김동석",
+  "received": "2026.06.18 14:19:05",
   "urgency": "high",
   "sla": 2,
   "status": "done",
@@ -2398,6 +2460,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김운섭",
+  "received": "2026.06.22 07:28:35",
   "urgency": "high",
   "sla": 1.5,
   "status": "new",
@@ -2425,10 +2488,11 @@ const VOC_POOL = [
   "y": 18,
   "phone": "010-3924-5756",
   "contact": "고지원 담당자",
-  "symptom": "프로그램에서 카메라 일부가 분할 화면에서 꺼진 상태로 나온다. 싸이트가 2개다.",
+  "symptom": "프로그램에서 카메라 일부가 분할 화면에서 꺼진 상태로 나온다. 싸이트가 2개다. 한곳은 뷰어로 보고 있고 한곳은 모니터로 보고 있는데 모니터에서도 잘 안나온다.",
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김운섭",
+  "received": "2026.06.22 11:28:06",
   "urgency": "low",
   "sla": 1.5,
   "status": "done",
@@ -2463,6 +2527,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김동석",
+  "received": "2026.06.23 09:24:26",
   "urgency": "high",
   "sla": 2,
   "status": "new",
@@ -2494,6 +2559,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.23 11:55:01",
   "urgency": "low",
   "sla": 1.5,
   "status": "new",
@@ -2521,10 +2587,11 @@ const VOC_POOL = [
   "y": 39,
   "phone": "010-4035-5915",
   "contact": "허지호 담당자",
-  "symptom": "카메라 3개가 안된다 모니터로 보고있다 선이 빠진건 모르겠다 누가 만진건지 모르겠는데 전임자도 잘 모르겠다고한다 통신사쪽에서 작업한게 있다고…",
+  "symptom": "카메라 3개가 안된다 모니터로 보고있다 선이 빠진건 모르겠다 누가 만진건지 모르겠는데 전임자도 잘 모르겠다고한다 통신사쪽에서 작업한게 있다고한다 엘지에 전화해보니 잘 모르겠다고한다 cctv업체에 점검요청하고 비용이 나오면 자기가 부담하겠다고한다. 오늘 가능한가?",
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.24 14:28:45",
   "urgency": "mid",
   "sla": 8,
   "status": "new",
@@ -2561,6 +2628,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "홍순기",
+  "received": "2026.06.25 13:39:30",
   "urgency": "high",
   "sla": 2,
   "status": "done",
@@ -2595,6 +2663,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "박평종",
+  "received": "2026.06.29 08:08:45",
   "urgency": "mid",
   "sla": 1.5,
   "status": "new",
@@ -2626,6 +2695,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "홍순기",
+  "received": "2026.06.29 10:23:22",
   "urgency": "mid",
   "sla": 4,
   "status": "scheduled",
@@ -2657,6 +2727,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "홍순기",
+  "received": "2026.06.29 10:53:09",
   "urgency": "high",
   "sla": 8,
   "status": "new",
@@ -2688,6 +2759,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "홍순기",
+  "received": "2026.06.29 16:57:55",
   "urgency": "low",
   "sla": 4,
   "status": "new",
@@ -2719,6 +2791,7 @@ const VOC_POOL = [
   "memo": "PC뷰어 일부 채널 미표출. 뷰어·카메라·선로 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "박평종",
+  "received": "2026.06.30 16:06:44",
   "urgency": "low",
   "sla": 8,
   "status": "done",
@@ -2754,10 +2827,11 @@ const VOC_POOL = [
   "y": 16,
   "phone": "010-4294-6286",
   "contact": "서수아 담당자",
-  "symptom": "요청일 : 20260602 32583 충남 공주시 공주대학로97 (신관동) 시시티비 휴대폰 안나온다 와서 점검 요청산다.",
+  "symptom": "녹화기(NVR) 관련 이상이 있어 점검을 요청드립니다.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "박평종",
+  "received": "2026.06.01 10:47:22",
   "urgency": "low",
   "sla": 8,
   "status": "scheduled",
@@ -2785,10 +2859,11 @@ const VOC_POOL = [
   "y": 23,
   "phone": "010-4331-6339",
   "contact": "최예준 담당자",
-  "symptom": "코드를 뺐다가 다시 연결했는데 기기에서 주기적으로 알람이 계속 울리고 휴대폰에서 영상확인이 안된다.",
+  "symptom": "코드를 뺐다가 다시 연결했는데 기기에서 주기적으로 알람이 계속 울리고 휴대폰에서 영상확인이 안된다. 알람 울리는거 때문에 지금 랜선을 빼놨는데 점검해달라.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.01 14:24:28",
   "urgency": "low",
   "sla": 1.5,
   "status": "scheduled",
@@ -2829,6 +2904,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "고현석",
+  "received": "2026.06.02 12:50:43",
   "urgency": "low",
   "sla": 2,
   "status": "done",
@@ -2859,10 +2935,11 @@ const VOC_POOL = [
   "y": 37,
   "phone": "010-4405-6445",
   "contact": "조예은 담당자",
-  "symptom": "요청일 : 20260604 30055 세종특별자치시 장군면 안기강산길20 (봉안리) ㆍ대상 기기 : 카드, 지문리더, 얼굴리더, CCTV 등…",
+  "symptom": "카메라 위치 변경 요청.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-영업",
   "worker": "정형주",
+  "received": "2026.06.03 17:09:25",
   "urgency": "mid",
   "sla": 1.5,
   "status": "done",
@@ -2902,10 +2979,11 @@ const VOC_POOL = [
   "y": 44,
   "phone": "010-4442-6498",
   "contact": "손시우 담당자",
-  "symptom": "1시간전부터 자꾸 시시티비가 나갔다 들어왔다 반복하거든요, 부팅이 된다고해야되나.",
+  "symptom": "1시간전부터 자꾸 시시티비가 나갔다 들어왔다 반복하거든요, 부팅이 된다고해야되나. 그런데 또 멀쩡히 이제 시시티비는 계속 나오는데 이상테 계속 몇번씩 반복을 하고 있거든요. -목 9시이후.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "정준희",
+  "received": "2026.06.03 19:10:39",
   "urgency": "low",
   "sla": 1.5,
   "status": "scheduled",
@@ -2937,6 +3015,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "박평종",
+  "received": "2026.06.05 11:50:55",
   "urgency": "mid",
   "sla": 4,
   "status": "scheduled",
@@ -2969,10 +3048,11 @@ const VOC_POOL = [
   "y": 58,
   "phone": "010-4516-6604",
   "contact": "조유진 담당자",
-  "symptom": "본사 CCTV 연결이 안되어서 현장에서 연결확인 부탁드립니다.완료 후 법인영업이재연프로에게 연락주시면 본사 유오영팀장님께 법인에서 피드백예정…",
+  "symptom": "본사 CCTV 연결이 안되어서 현장에서 연결확인 부탁드립니다.완료 후 법인영업이재연프로에게 연락주시면 본사 유오영팀장님께 법인에서 피드백예정입니다.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.08 10:03:32",
   "urgency": "low",
   "sla": 2,
   "status": "new",
@@ -3004,6 +3084,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.08 15:24:16",
   "urgency": "low",
   "sla": 2,
   "status": "scheduled",
@@ -3035,6 +3116,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김남조",
+  "received": "2026.06.09 10:02:39",
   "urgency": "high",
   "sla": 4,
   "status": "new",
@@ -3075,6 +3157,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "진재혁",
+  "received": "2026.06.10 15:22:38",
   "urgency": "low",
   "sla": 2,
   "status": "done",
@@ -3105,10 +3188,11 @@ const VOC_POOL = [
   "y": 14,
   "phone": "010-4664-6816",
   "contact": "권지민 담당자",
-  "symptom": "요청일 : 20260611 30003 세종특별자치시 전의면 산단길22-50, 1층 (관정리) 접속 과정 중 문제가 발생하였습니다.",
+  "symptom": "녹화기(NVR) 관련 이상이 있어 점검을 요청드립니다.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "진재혁",
+  "received": "2026.06.10 19:45:43",
   "urgency": "low",
   "sla": 8,
   "status": "new",
@@ -3145,6 +3229,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "홍순기",
+  "received": "2026.06.11 15:21:53",
   "urgency": "mid",
   "sla": 2,
   "status": "done",
@@ -3188,6 +3273,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.11 16:05:26",
   "urgency": "low",
   "sla": 1.5,
   "status": "done",
@@ -3223,10 +3309,11 @@ const VOC_POOL = [
   "y": 35,
   "phone": "010-4775-6975",
   "contact": "이재훈 담당자",
-  "symptom": "모니터 화면에 이벤트창, 상태창같은게 떠서 화면을 가리고 있다. 따로 마우스 연결도 안되어있고 닫기를 누를 수가 없는데 리모컨으로 해야하는가…",
+  "symptom": "모니터 화면에 이벤트창, 상태창같은게 떠서 화면을 가리고 있다. 따로 마우스 연결도 안되어있고 닫기를 누를 수가 없는데 리모컨으로 해야하는가? 우리가 못할거같은데 확인해달라.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김경민",
+  "received": "2026.06.11 16:41:16",
   "urgency": "low",
   "sla": 4,
   "status": "new",
@@ -3267,6 +3354,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김재룡",
+  "received": "2026.06.16 11:36:36",
   "urgency": "mid",
   "sla": 4,
   "status": "new",
@@ -3294,10 +3382,11 @@ const VOC_POOL = [
   "y": 49,
   "phone": "010-4849-7081",
   "contact": "김지민 담당자",
-  "symptom": "요청일 : 20260616 32581 충남 공주시 흑수골길48 (신관동) Cctv가 안나와요.",
+  "symptom": "녹화기(NVR) 관련 이상이 있어 점검을 요청드립니다.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "박평종",
+  "received": "2026.06.15 19:01:41",
   "urgency": "low",
   "sla": 1.5,
   "status": "done",
@@ -3328,10 +3417,11 @@ const VOC_POOL = [
   "y": 56,
   "phone": "010-4886-7134",
   "contact": "윤성민 담당자",
-  "symptom": "요청일 : 20260616 32581 충남 공주시 흑수골길48 (신관동) Cctv가 또안나와요.",
+  "symptom": "녹화기(NVR) 관련 이상이 있어 점검을 요청드립니다.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김운섭",
+  "received": "2026.06.15 19:10:39",
   "urgency": "mid",
   "sla": 8,
   "status": "done",
@@ -3362,10 +3452,11 @@ const VOC_POOL = [
   "y": 63,
   "phone": "010-4923-7187",
   "contact": "서예준 담당자",
-  "symptom": "카메라 1대가 안나오고 있고, 카메라 연결된 쪽에서 소리가 간헐적으로 난다.",
+  "symptom": "카메라 1대가 안나오고 있고, 카메라 연결된 쪽에서 소리가 간헐적으로 난다. 지금 카메라를 4~5번이나 점검하고 갔는데 다시는 전화 안하게 해달라. 한번만 더 전화하게 만들면 다른데로 바꿔버릴거다.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-영업",
   "worker": "전윤정",
+  "received": "2026.06.16 17:27:51",
   "urgency": "high",
   "sla": 1.5,
   "status": "done",
@@ -3396,10 +3487,11 @@ const VOC_POOL = [
   "y": 70,
   "phone": "010-4960-7240",
   "contact": "조서준 담당자",
-  "symptom": "요청일 : 20260617 32591 충청남도 공주시 금벽로1071, C동 (석장리동) ㆍ대상 기기 : 카드, 지문리더, 얼굴리더, CCTV…",
+  "symptom": "외부 카메라 1대가 미작동.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김대록",
+  "received": "2026.06.16 14:03:48",
   "urgency": "mid",
   "sla": 4,
   "status": "done",
@@ -3430,10 +3522,11 @@ const VOC_POOL = [
   "y": 77,
   "phone": "010-4997-7293",
   "contact": "유서준 담당자",
-  "symptom": "요청일 : 20260617 30071 세종특별자치시 부강면 연청로745-46, D동 (갈산리) ㆍ대상 기기 : 카드, 지문리더, 얼굴리더,…",
+  "symptom": "3번 카메라 안나옴.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.16 15:58:50",
   "urgency": "mid",
   "sla": 1.5,
   "status": "scheduled",
@@ -3470,10 +3563,11 @@ const VOC_POOL = [
   "y": 84,
   "phone": "010-5034-7346",
   "contact": "서건우 담당자",
-  "symptom": "요청일 : 20260619 32525 충청남도 공주시 신풍면 용못길23 (백룡리) 핸드폰으로 안나와요 점검해주세요.",
+  "symptom": "녹화기(NVR) 관련 이상이 있어 점검을 요청드립니다.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김운섭",
+  "received": "2026.06.18 10:54:49",
   "urgency": "low",
   "sla": 8,
   "status": "done",
@@ -3517,6 +3611,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.18 13:46:05",
   "urgency": "high",
   "sla": 4,
   "status": "done",
@@ -3547,10 +3642,11 @@ const VOC_POOL = [
   "y": 26,
   "phone": "010-5108-7452",
   "contact": "손예준 담당자",
-  "symptom": "요청일 : 20260619 32582 충남 공주시 공주대학로88-3 (신관동) ㆍ대상 기기 : 카드, 지문리더, 얼굴리더, CCTV가 자꾸끊…",
+  "symptom": "녹화기(NVR) 관련 이상이 있어 점검을 요청드립니다.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김운섭",
+  "received": "2026.06.18 15:17:45",
   "urgency": "mid",
   "sla": 1.5,
   "status": "done",
@@ -3586,10 +3682,11 @@ const VOC_POOL = [
   "y": 33,
   "phone": "010-5145-7505",
   "contact": "권예준 담당자",
-  "symptom": "요청일 : 20260620 32581 충청남도 공주시 흑수골길36 (신관동) ㆍ대상 기기 : 카드, 지문리더, 얼굴리더, CCTV 등 ㆍ발생…",
+  "symptom": "영상한대가안나와요 와서점검좀해주세요.",
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "홍순기",
+  "received": "2026.06.19 16:39:24",
   "urgency": "mid",
   "sla": 2,
   "status": "scheduled",
@@ -3626,6 +3723,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전동진",
+  "received": "2026.06.23 09:18:57",
   "urgency": "low",
   "sla": 1.5,
   "status": "scheduled",
@@ -3657,6 +3755,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김남조",
+  "received": "2026.06.25 08:55:16",
   "urgency": "low",
   "sla": 1.5,
   "status": "new",
@@ -3697,6 +3796,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김남조",
+  "received": "2026.06.27 11:44:26",
   "urgency": "mid",
   "sla": 8,
   "status": "done",
@@ -3731,6 +3831,7 @@ const VOC_POOL = [
   "memo": "본체(녹화기) 이상 알림/소음. 자가진단 및 현장 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김태호",
+  "received": "2026.06.30 15:17:13",
   "urgency": "low",
   "sla": 4,
   "status": "new",
@@ -3767,6 +3868,7 @@ const VOC_POOL = [
   "memo": "네트워크 장비(공유기/허브) 이상. 통신 상태 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "고현석",
+  "received": "2026.06.01 09:58:08",
   "urgency": "mid",
   "sla": 8,
   "status": "done",
@@ -3797,10 +3899,11 @@ const VOC_POOL = [
   "y": 75,
   "phone": "010-5367-7823",
   "contact": "한지우 담당자",
-  "symptom": "에스원과 연결되어 있는데 와이파이가 kt쪽 으로 연결돼서 비밀번호 어디에 알아봐야 하나요? kt와이파이 인터넷 에스원과 관련이 없는건가? 와…",
+  "symptom": "에스원과 연결되어 있는데 와이파이가 kt쪽 으로 연결돼서 비밀번호 어디에 알아봐야 하나요? kt와이파이 인터넷 에스원과 관련이 없는건가? 와이파이가 지금 뜨는게 있는데 전체 와이파이가 5기가로 되어있다. 비밀번호 적어놓은게 아무리 찾아도 없다. 비밀번호 알 수 있을까요? 와이파이 에스원에서 설치한걸로 알고 있다.",
   "memo": "네트워크 장비(공유기/허브) 이상. 통신 상태 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "전재우",
+  "received": "2026.06.08 10:04:10",
   "urgency": "low",
   "sla": 8,
   "status": "new",
@@ -3837,10 +3940,11 @@ const VOC_POOL = [
   "y": 82,
   "phone": "010-5404-7876",
   "contact": "신건우 담당자",
-  "symptom": "휴대폰 모바일 뷰어에서 진미식품만 안보인다. 왜냐면 냉동냉장저온 창고가 있는데 비오면서 청둥칠때 전기 맞아서 안되는지 확인하고 싶다.",
+  "symptom": "휴대폰 모바일 뷰어에서 진미식품만 안보인다. 왜냐면 냉동냉장저온 창고가 있는데 비오면서 청둥칠때 전기 맞아서 안되는지 확인하고 싶다. 연락달라.",
   "memo": "모바일(모두앱) 영상 미표출. 앱 권한·네트워크 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김남조",
+  "received": "2026.06.14 17:28:12",
   "urgency": "low",
   "sla": 1.5,
   "status": "scheduled",
@@ -3872,6 +3976,7 @@ const VOC_POOL = [
   "memo": "모바일(모두앱) 영상 미표출. 앱 권한·네트워크 점검 필요.",
   "dept": "세종지사(공주지점)-서비스",
   "worker": "김운섭",
+  "received": "2026.06.17 10:48:39",
   "urgency": "mid",
   "sla": 2,
   "status": "done",
@@ -3902,10 +4007,11 @@ const VOC_POOL = [
   "y": 24,
   "phone": "010-5478-7982",
   "contact": "류예준 담당자",
-  "symptom": "금일 방문요청 모바일로 보고있다 .카메라 1 2 3 누르면 어플 내 영상 터치가 안된다. 접속이 안된다.",
+  "symptom": "금일 방문요청 모바일로 보고있다 .카메라 1 2 3 누르면 어플 내 영상 터치가 안된다. 접속이 안된다. 본체와 연결된 모니터는 사용안한다 .오늘 봐야 한다 연락 달라. 이은관 팀장님께 유선전달함 참고 부탁드립니다.",
   "memo": "모바일(모두앱) 영상 미표출. 앱 권한·네트워크 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.29 18:34:13",
   "urgency": "mid",
   "sla": 2,
   "status": "new",
@@ -3937,6 +4043,7 @@ const VOC_POOL = [
   "memo": "모바일(모두앱) 영상 미표출. 앱 권한·네트워크 점검 필요.",
   "dept": "세종지사-서비스",
   "worker": "김민호",
+  "received": "2026.06.30 19:00:23",
   "urgency": "low",
   "sla": 8,
   "status": "new",
@@ -4181,10 +4288,21 @@ VIEWS.home=()=>{
       </div>
     </div>
 
-    <div style="animation-delay:.22s;margin-top:20px">
+    <div style="animation-delay:.19s;margin-top:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="tiny muted" style="font-weight:800">가까운 고객 지도</div>
+        <span class="tiny" style="color:var(--primary);font-weight:700" data-tab="route">지도에서 보기 ›</span>
+      </div>
+      <div style="position:relative">
+        <div class="leafmini" id="homeMini"></div>
+        <div style="position:absolute;inset:0;z-index:1200;cursor:pointer" data-tab="route"></div>
+      </div>
+    </div>
+
+    <div style="animation-delay:.24s;margin-top:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div class="tiny muted" style="font-weight:800">다음 방문 예정</div>
-        <span class="tiny" style="color:var(--primary);font-weight:700" data-tab="route">동선 전체보기 ›</span>
+        <span class="tiny" style="color:var(--primary);font-weight:700" data-tab="route">지도 ›</span>
       </div>
       ${upcoming.length?upcoming.slice(0,3).map(timelineRow).join(''):`<div class="card" style="text-align:center;padding:22px"><div class="tiny muted">예정된 진행 건이 없어요</div></div>`}
     </div>
@@ -4459,6 +4577,23 @@ VIEWS.guide=({id})=>{
 /* ---- Result (AI auto-filled) ---- */
 VIEWS.result=({id})=>{
   const v=VOCS.find(x=>x.id===id);const g=GUIDE[v.code];const st=STATE[v.id];
+  if(st.completed){
+    return `
+<div class="hdr"><div class="back">${ic('chevL',22)}</div><div style="flex:1"><h1 style="font-size:17px">조치 결과</h1><div class="sub">${v.company}</div></div><span class="badge b-done">완료</span></div>
+<div class="scroll">
+  <div style="padding:14px 20px 0" class="fadein">
+    <div class="card" style="display:flex;gap:11px;align-items:center;background:linear-gradient(150deg,rgba(0,191,165,.12),rgba(17,26,46,.9));border-color:rgba(0,191,165,.3)">
+      <div style="width:38px;height:38px;border-radius:12px;background:var(--grad-mint);display:grid;place-items:center;flex:none;color:#04121a">${ic('check',20,3)}</div>
+      <div><div style="font-weight:800;font-size:14px">완료된 VOC예요</div><div class="tiny muted">${v.codeName}</div></div>
+    </div>
+    <div class="section-t" style="margin-left:2px">처리 상태</div>
+    <div class="card" style="padding:14px 16px"><span style="font-weight:800;color:var(--primary)">${st.compStatus||'조치 완료'}</span></div>
+    <div class="section-t" style="margin-left:2px">조치 결과</div>
+    <div class="card" style="padding:16px;font-size:14.5px;line-height:1.7;white-space:pre-line">${st.result||'기록된 조치 결과가 없습니다.'}</div>
+  </div>
+  <div style="height:40px"></div>
+</div>`;
+  }
   const grps=dxGroupsOf(v.code);
   var _seen={};
   const auto = (st.aiMode==='use' && g && st.causes && st.causes.length)
@@ -4597,19 +4732,23 @@ VIEWS.navi=({id})=>{
 </div>`;
 };
 
-/* ---- Route ---- */
+/* ---- 지도 (키 없이 OSM/Leaflet) ---- */
 VIEWS.route=()=>{
   return `
-<div class="hdr" style="padding-top:14px"><div style="flex:1"><h1>오늘의 동선</h1><div class="sub">AI 추천 · 가까운 순 정렬</div></div></div>
+<div class="hdr" style="padding-top:14px"><div style="flex:1"><h1>지도</h1><div class="sub">오늘 배정된 VOC 위치</div></div></div>
 <div class="scroll">
   <div style="padding:0 20px" class="fadein">
-    <div class="map" id="routeMap"></div>
-    <div style="margin-top:14px;padding:2px 6px;display:flex;align-items:center;gap:7px">
-      <span class="tiny muted" style="font-weight:700">방문지</span><span id="routeCount" class="numm" style="font-weight:800;font-size:16px">–</span>
+    <div class="leafmap" id="mapCanvas"></div>
+    <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div><span class="tiny muted" style="font-weight:700">고객처</span> <span class="numm" style="font-weight:800;font-size:16px">${VOCS.length}곳</span></div>
+      <div style="display:flex;gap:7px" id="mapSort">
+        <span class="chip on" data-sort="dist" style="cursor:pointer;padding:7px 12px">거리순</span>
+        <span class="chip" data-sort="date" style="cursor:pointer;padding:7px 12px">접수일자순</span>
+      </div>
     </div>
-    <div class="section-t" style="margin-left:2px;margin-bottom:6px">추천 방문 순서 <span class="tiny muted" style="font-weight:600">· 손잡이를 끌어 순서 변경</span></div>
+    <div class="section-t" style="margin-left:2px;margin-bottom:6px">고객처 목록</div>
   </div>
-  <div style="padding:0 20px" id="routeList"></div>
+  <div style="padding:0 20px" id="mapList"></div>
   <div style="height:20px"></div>
 </div>`;
 };
@@ -4617,50 +4756,87 @@ function recommend(){
   // 가까운 순(거리 오름차순)
   return [...VOCS].filter(v=>!STATE[v.id].completed).sort((a,b)=>a.dist-b.dist);
 }
-let routeOrder=null;
-function routeList(){
-  if(!routeOrder) routeOrder=recommend().map(v=>v.id);
-  routeOrder=routeOrder.filter(id=>{const v=VOCS.find(x=>x.id===id);return v && !STATE[id].completed;});
-  recommend().forEach(v=>{if(!routeOrder.includes(v.id))routeOrder.push(v.id);});
-  return routeOrder.map(id=>VOCS.find(v=>v.id===id));
+function fmtRecv(r){ const m=String(r||'').match(/(\d{4})\.(\d{2})\.(\d{2})/); return m?`${+m[2]}/${+m[3]}`:'-'; }
+let _mapSort='dist';
+function mapVocs(){
+  const arr=[...VOCS];
+  if(_mapSort==='date') arr.sort((a,b)=>String(b.received||'').localeCompare(String(a.received||'')));
+  else arr.sort((a,b)=>a.dist-b.dist);
+  return arr;
 }
-function renderRoute(scope){
-  const order=routeList();
-  const mapEl=scope.querySelector('#routeMap');
-  if(!mapEl) return;
-  mapEl.innerHTML=
-    order.map((v,i)=>`<div class="pin" style="left:${v.x}%;top:${v.y}%;animation:revUp .45s var(--spring) both;animation-delay:${i*.05}s">
-      <div class="p" style="background:${i===0?'var(--grad-mint)':'linear-gradient(135deg,#2E7BF6,#25C56A)'}"><b>${i+1}</b></div></div>`).join('')
-    +`<svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1" viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="${order.map(v=>`${v.x},${v.y}`).join(' ')}" fill="none" stroke="rgba(0,191,165,.55)" stroke-width="0.9" stroke-dasharray="2 2" style="stroke-dashoffset:200;animation:draw 1.2s .1s forwards"/></svg>`
-    +`<div style="position:absolute;left:14px;top:14px;z-index:4" class="chip on tiny">${ic('pin',12)} 현재 위치 기준 · 가까운 순</div>`;
-  scope.querySelector('#routeCount').textContent=order.length+'곳';
-  const listEl=scope.querySelector('#routeList');
-  listEl.innerHTML=order.map((v,i)=>`
-    <div class="card rrow" data-idx="${i}" data-voc="${v.id}" style="cursor:pointer;margin-bottom:11px;display:flex;gap:11px;align-items:center;${i===0?'border-color:rgba(0,191,165,.4)':''}">
-      <div class="grip" draggable="true" data-idx="${i}">${ic('grip',20)}</div>
-      <div style="width:32px;height:32px;border-radius:10px;background:${i===0?'var(--grad-mint)':'var(--surface3)'};color:${i===0?'#04121a':'var(--muted)'};display:grid;place-items:center;font-weight:800;flex:none">${i+1}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.company}</div>
-        <div class="tiny muted" style="margin-top:2px">${v.dist}km · ${v.short}</div>
-        ${i===0?`<div class="tiny" style="color:var(--primary);margin-top:5px;font-weight:600">${ic('pin',11)} 최우선 방문</div>`:''}
+function mkPin(){
+  var s='<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">'
+   +'<defs><filter id="sh" x="-40%" y="-20%" width="180%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="rgba(0,0,0,.4)"/></filter>'
+   +'<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF5E7A"/><stop offset="1" stop-color="#F5455F"/></linearGradient></defs>'
+   +'<path filter="url(#sh)" d="M16 1C8 1 1.5 7.5 1.5 15.5 1.5 26 16 41 16 41S30.5 26 30.5 15.5C30.5 7.5 24 1 16 1z" fill="url(#g)" stroke="#fff" stroke-width="2"/>'
+   +'<circle cx="16" cy="15.5" r="5.4" fill="#fff"/></svg>';
+  return L.icon({iconUrl:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s),iconSize:[32,42],iconAnchor:[16,40],popupAnchor:[0,-36]});
+}
+function openKakaoMap(id){
+  var v=VOCS.find(function(x){return x.id===id;});
+  if(v&&typeof v.lat==='number'){ window.open('https://map.kakao.com/link/to/'+encodeURIComponent(v.company)+','+v.lat+','+v.lng,'_blank'); toast('카카오맵을 엽니다','nav'); }
+}
+let _leafMap=null;
+function renderMap(scope){
+  const el=scope.querySelector('#mapCanvas');
+  if(el && window.L){
+    if(_leafMap){try{_leafMap.remove();}catch(_){}_leafMap=null;}
+    const map=L.map(el,{attributionControl:false}).setView([36.48,127.25],11);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{maxZoom:20,subdomains:'abcd'}).addTo(map);
+    const pts=[];
+    VOCS.forEach(v=>{
+      if(typeof v.lat!=='number') return;
+      const mk=L.marker([v.lat,v.lng],{icon:mkPin()}).addTo(map);
+      mk.bindPopup('<div style="font-weight:800;font-size:13px;margin-bottom:2px">'+v.company+'</div>'
+        +'<div style="color:var(--muted);font-size:11.5px;margin-bottom:8px">'+v.short+' · '+v.dist+'km</div>'
+        +'<button onclick="openKakaoMap(\''+v.id+'\')" style="width:100%;padding:8px 10px;border:none;border-radius:9px;background:linear-gradient(135deg,#2E7BF6,#25C56A);color:#04121a;font-weight:800;font-size:12px;cursor:pointer">카카오맵 길찾기</button>');
+      pts.push([v.lat,v.lng]);
+    });
+    _leafMap=map;
+    setTimeout(()=>{try{map.invalidateSize(); if(pts.length && map.getSize().x>40) map.fitBounds(pts,{padding:[28,28],maxZoom:15});}catch(_){}} ,120);
+  } else if(el){
+    el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:13px">지도를 불러오지 못했어요 (네트워크 확인)</div>';
+  }
+  renderMapList(scope);
+  scope.querySelectorAll('#mapSort [data-sort]').forEach(c=>c.onclick=()=>{
+    _mapSort=c.dataset.sort;
+    scope.querySelectorAll('#mapSort [data-sort]').forEach(x=>x.classList.toggle('on',x===c));
+    renderMapList(scope);
+  });
+}
+function renderMapList(scope){
+  const listEl=scope.querySelector('#mapList'); if(!listEl) return;
+  const arr=mapVocs();
+  listEl.innerHTML=arr.map((v,i)=>`
+    <div class="card" style="margin-bottom:11px;display:flex;gap:12px;align-items:center">
+      <div class="mvopen" data-voc="${v.id}" style="cursor:pointer;flex:1;min-width:0;display:flex;gap:12px;align-items:center">
+        <div style="width:30px;height:30px;border-radius:9px;background:var(--surface3);color:var(--primary);display:grid;place-items:center;font-weight:800;flex:none">${i+1}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.company}</div>
+          <div class="tiny muted" style="margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ic('pin',11)} ${v.addr}</div>
+          <div class="tiny muted" style="margin-top:3px">${v.dist}km · 접수 ${fmtRecv(v.received)}</div>
+        </div>
       </div>
+      ${STATE[v.id].completed
+        ? '<span class="badge b-done" style="flex:none">완료</span>'
+        : `<span class="chip tiny" data-kakao="${v.id}" style="flex:none;cursor:pointer;color:var(--primary);border-color:rgba(0,191,165,.4);padding:8px 11px">${ic('nav',13)} 길찾기</span>`}
     </div>`).join('');
-  wireRouteDnD(scope,listEl);
+  listEl.querySelectorAll('.mvopen').forEach(n=>n.onclick=()=>push('detail',{id:n.dataset.voc}));
+  listEl.querySelectorAll('[data-kakao]').forEach(n=>n.onclick=e=>{e.stopPropagation();openKakaoMap(n.dataset.kakao);});
 }
-let _dragIdx=null;
-function wireRouteDnD(scope,listEl){
-  listEl.querySelectorAll('.grip').forEach(g=>{
-    g.onclick=e=>e.stopPropagation();
-    g.ondragstart=e=>{_dragIdx=+g.dataset.idx;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',g.dataset.idx);}catch(_){}g.closest('.rrow').classList.add('dragging');};
-    g.ondragend=()=>{listEl.querySelectorAll('.rrow').forEach(r=>r.classList.remove('dragging','over'));_dragIdx=null;};
-  });
-  listEl.querySelectorAll('.rrow').forEach(row=>{
-    row.ondragover=e=>{e.preventDefault();row.classList.add('over');};
-    row.ondragleave=()=>row.classList.remove('over');
-    row.ondrop=e=>{e.preventDefault();const to=+row.dataset.idx;if(_dragIdx===null||_dragIdx===to){row.classList.remove('over');return;}
-      const m=routeOrder.splice(_dragIdx,1)[0];routeOrder.splice(to,0,m);_dragIdx=null;renderRoute(scope);toast('방문 순서를 변경했어요 · 지도 반영','nav');};
-    row.onclick=()=>push('detail',{id:row.dataset.voc});
-  });
+function renderHomeMini(scope){
+  const el=scope.querySelector('#homeMini'); if(!el || el._leaflet_id) return;
+  let near=[...VOCS].filter(v=>!STATE[v.id].completed).sort((a,b)=>a.dist-b.dist).slice(0,3);
+  if(!near.length) near=[...VOCS].sort((a,b)=>a.dist-b.dist).slice(0,3);
+  if(window.L){
+    const map=L.map(el,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false,tap:false}).setView([36.48,127.25],11);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{maxZoom:20,subdomains:'abcd'}).addTo(map);
+    const pts=[];
+    near.forEach(v=>{ if(typeof v.lat!=='number')return; L.marker([v.lat,v.lng],{icon:mkPin()}).addTo(map); pts.push([v.lat,v.lng]); });
+    setTimeout(()=>{try{map.invalidateSize(); if(pts.length && map.getSize().x>40) map.fitBounds(pts,{padding:[24,24],maxZoom:13});}catch(_){}} ,120);
+  } else {
+    el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:12px">지도 미리보기 (네트워크 확인)</div>';
+  }
 }
 
 /* ---- Alerts ---- */
@@ -4886,6 +5062,7 @@ function bindScreen(el,name,params){
       haptic(sw);
       toast(USER.seniorMode?'숙련자 모드 ON · 바로 결과 입력':'숙련자 모드 OFF · AI 가이드 선택', USER.seniorMode?'flash':'ai');
     });
+    renderHomeMini(el);
   }
 
   if(name==='vocList'){
@@ -4917,7 +5094,7 @@ function bindScreen(el,name,params){
     });
   }
 
-  if(name==='route'){ renderRoute(el); }
+  if(name==='route'){ renderMap(el); }
 
   if(name==='navi'){
     const path=el.querySelector('#route');const car=el.querySelector('.car');
@@ -4963,7 +5140,9 @@ function bindScreen(el,name,params){
   }
 
   if(name==='result'){
-    const id=params.id;const ta=el.querySelector('#resultTa');const st=STATE[id];
+    const id=params.id;const st=STATE[id];
+    if(st.completed) return; // 완료 VOC = 읽기전용 조치 결과 화면 (바인딩 없음)
+    const ta=el.querySelector('#resultTa');
     ta.oninput=()=>st.result=ta.value;
     // 자동 작성 결과 타이핑 효과
     if(ta.dataset.type==='1'){ setTimeout(()=>typeInto(ta, st.result, 22), 260); }
@@ -4992,7 +5171,7 @@ function renderTabs(){
   const cur=stack[stack.length-1];
   const showTab = cur && rootNames.includes(cur.name);
   if(!showTab || cur.name==='login'){tb.innerHTML='';return;}
-  const tabs=[['home','홈','home'],['voc','VOC','list'],['route','동선','route'],['alerts','알림','bell'],['my','마이','user']];
+  const tabs=[['home','홈','home'],['voc','VOC','list'],['route','지도','pin'],['alerts','알림','bell'],['my','마이','user']];
   tb.className='tabbar';
   tb.innerHTML=tabs.map(([k,t,i])=>`<div class="tab ${activeTab===k?'on':''}" data-t="${k}">${k==='alerts'?'<span class="badge-n">3</span>':''}<span class="ti">${ic(i,23,2)}</span>${t}</div>`).join('');
   tb.querySelectorAll('[data-t]').forEach(n=>n.onclick=()=>{haptic(n);switchTab(n.dataset.t);});
