@@ -1675,9 +1675,15 @@ VIEWS.home=()=>{
   const top=[...mine].filter(v=>v.urgency==='high'&&!STATE[v.id].completed).sort((a,b)=>a.dist-b.dist)[0] || recommend()[0];
   return `
 <div class="scroll">
-  <div style="display:flex;align-items:center;gap:7px;padding:14px 20px 0">
-    <img src="logo.png" alt="" style="width:34px;height:34px;object-fit:contain;flex:none" />
-    <span style="font-weight:800;font-size:27px;letter-spacing:-.01em">에스원 <span class="numg" style="font-weight:900">Answer</span></span>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 20px 0">
+    <div style="display:flex;align-items:center;gap:7px;min-width:0">
+      <img src="logo.png" alt="" style="width:34px;height:34px;object-fit:contain;flex:none" />
+      <span style="font-weight:800;font-size:27px;letter-spacing:-.01em">에스원 <span class="numg" style="font-weight:900">Answer</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;flex:none">
+      <span class="tiny" style="font-weight:700;color:${USER.seniorMode?'var(--primary)':'var(--muted)'}" id="seniorLabel">숙련자</span>
+      <div class="sw ${USER.seniorMode?'on':''}" data-seniortoggle><i></i></div>
+    </div>
   </div>
   <div class="hdr" style="padding-top:8px">
     <div style="flex:1">
@@ -1860,10 +1866,12 @@ VIEWS.detail=({id})=>{
 <div class="dock">
   ${st.completed
     ? `<button class="btn ghost" data-view-result="${v.id}">${ic('doc',17)} 조치 결과 보기</button>`
-    : `<div style="display:flex;gap:10px">
+    : (USER.seniorMode
+       ? `<button class="btn shine" data-aidirect="skip" data-id="${v.id}">${ic('mic',17)} VOC 조치결과 입력</button>`
+       : `<div style="display:flex;gap:10px">
         <button class="btn shine" style="flex:1.5" data-aidirect="use" data-id="${v.id}">${ic('ai',18)} AI 가이드 사용</button>
         <button class="btn ghost" style="flex:1" data-aidirect="skip" data-id="${v.id}">${ic('skip',16)} 건너뛰기</button>
-       </div>`}
+       </div>`)}
 </div>`;
 };
 
@@ -2245,8 +2253,7 @@ VIEWS.my=()=>`
   <div class="section-t" style="margin-left:2px">조치 환경 설정</div>
   <div class="card" style="padding:6px 16px;animation-delay:.16s">
     <div class="kv" style="align-items:center"><div><div style="font-weight:700;font-size:14px">AI 가이드 기본 사용</div><div class="tiny muted">VOC 조치 시작 시 기본값</div></div><div class="sw ${USER.aiDefault?'on':''}" data-setting="ai"><i></i></div></div>
-    <div class="kv" style="align-items:center"><div><div style="font-weight:700;font-size:14px">음성 입력 사용</div><div class="tiny muted">현장 소음 자동 보정</div></div><div class="sw on" data-setting="voice"><i></i></div></div>
-    <div class="kv" style="align-items:center;border:none"><div><div style="font-weight:700;font-size:14px">숙련자 모드</div><div class="tiny muted">SKIP·빠른 완료 우선 노출</div></div><div class="sw ${USER.seniorMode?'on':''}" data-setting="senior"><i></i></div></div>
+    <div class="kv" style="align-items:center;border:none"><div><div style="font-weight:700;font-size:14px">음성 입력 사용</div><div class="tiny muted">현장 소음 자동 보정</div></div><div class="sw on" data-setting="voice"><i></i></div></div>
   </div>
   <div class="section-t" style="margin-left:2px">알림</div>
   <div class="card" style="padding:6px 16px;animation-delay:.22s">
@@ -2380,6 +2387,16 @@ function bindScreen(el,name,params){
   setTimeout(()=>el.querySelectorAll('[data-w]').forEach(n=>n.style.width=n.dataset.w),200);
 
   if(name==='login'){$("#loginBtn").onclick=()=>{haptic($("#loginBtn"));toast('인증 완료','check');setTimeout(()=>{switchTab('home');},500);};}
+
+  if(name==='home'){
+    el.querySelectorAll('[data-seniortoggle]').forEach(sw=>sw.onclick=()=>{
+      USER.seniorMode=!USER.seniorMode;
+      sw.classList.toggle('on',USER.seniorMode);
+      var lb=el.querySelector('#seniorLabel'); if(lb)lb.style.color=USER.seniorMode?'var(--primary)':'var(--muted)';
+      haptic(sw);
+      toast(USER.seniorMode?'숙련자 모드 ON · 바로 결과 입력':'숙련자 모드 OFF · AI 가이드 선택', USER.seniorMode?'flash':'ai');
+    });
+  }
 
   if(name==='vocList'){
     el.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>resetTo('vocList',{filter:b.dataset.filter}));
