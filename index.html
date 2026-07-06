@@ -253,6 +253,10 @@ hr.sep{border:none;border-top:1px solid var(--line);margin:14px 0;}
 .pill-tabs button.on{background:var(--surface3);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.25);}
 textarea,input{font-family:inherit;}
 .ta{width:100%;background:var(--surface2);border:1.5px solid var(--line2);border-radius:16px;padding:15px;color:var(--text);font-size:14.5px;line-height:1.55;resize:none;outline:none;transition:border-color .2s;}
+.digclock{width:100%;box-sizing:border-box;background:linear-gradient(150deg,rgba(0,191,165,.10),var(--surface2));border:1.5px solid rgba(0,191,165,.4);border-radius:16px;padding:14px 16px;color:var(--primary);font-size:34px;font-weight:800;letter-spacing:.05em;text-align:center;outline:none;font-variant-numeric:tabular-nums;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;}
+.digclock::-webkit-calendar-picker-indicator{filter:invert(.65) sepia(1) saturate(4) hue-rotate(120deg);cursor:pointer;}
+.datefield{width:100%;box-sizing:border-box;background:var(--surface2);border:1.5px solid var(--line2);border-radius:12px;padding:12px 14px;color:var(--text);font-size:14.5px;font-weight:700;outline:none;font-family:inherit;}
+.datefield::-webkit-calendar-picker-indicator{filter:invert(.7);cursor:pointer;}
 .ta:focus{border-color:var(--primary);}
 
 /* ============ 항상 살아있는 모션 ============ */
@@ -1621,6 +1625,7 @@ function ic(name,size=22,stroke=2){
     check:'<path d="M4 12l5 5L20 6"/>',
     mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
     clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    cal:'<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4M12 16v-3M12 13h.01"/>',
     chevR:'<path d="M9 5l7 7-7 7"/>',
     chevL:'<path d="M15 5l-7 7 7 7"/>',
     pin:'<path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
@@ -1809,9 +1814,8 @@ function timelineRow(v){return `
 /* ---- VOC list ---- */
 VIEWS.vocList=(p={})=>{
   const filter=p.filter||'all';
-  const tabs=[['all','전체'],['high','긴급'],['inprogress','진행중'],['done','완료']];
+  const tabs=[['all','전체'],['inprogress','진행중'],['done','완료']];
   let list=VOCS.filter(v=>{
-    if(filter==='high')return v.urgency==='high' && !STATE[v.id].completed;
     if(filter==='inprogress')return !STATE[v.id].completed;
     if(filter==='done')return STATE[v.id].completed;
     return true;
@@ -1839,7 +1843,7 @@ function vocCard(v,i){
 <div class="card" data-voc="${v.id}" style="cursor:pointer;margin-bottom:12px;opacity:0;transform:translateY(16px);animation:revUp .5s var(--spring) forwards;animation-delay:${i*.06}s;${v.urgency==='high'&&!st.completed?'border-color:rgba(255,91,114,.3)':''}">
   <div style="display:flex;justify-content:space-between;align-items:center">
     <div style="display:flex;gap:8px;align-items:center">
-      <span class="badge ${st.completed?'b-done':URG[v.urgency].c}"><span class="dot"></span>${st.completed?'완료':URG[v.urgency].t}</span>
+      ${st.completed?`<span class="badge b-done"><span class="dot"></span>완료</span>`:''}
       ${v.repeat>1?`<span class="chip tiny" style="padding:4px 8px;color:#FF8494;background:rgba(255,91,114,.12);border-color:transparent">반복 ${v.repeat}회</span>`:''}
     </div>
     <span class="tiny muted">${v.vocNo}</span>
@@ -1866,7 +1870,7 @@ VIEWS.detail=({id})=>{
 <div class="hdr">
   <div class="back">${ic('chevL',22)}</div>
   <div style="flex:1"><h1 style="font-size:17px">고객 VOC 조회</h1><div class="sub">${v.vocNo}</div></div>
-  <span class="badge ${st.completed?'b-done':URG[v.urgency].c}">${st.completed?'완료':URG[v.urgency].t}</span>
+  ${st.completed?`<span class="badge b-done">완료</span>`:''}
 </div>
 <div class="scroll">
   <div style="padding:0 20px" class="stagger">
@@ -1880,7 +1884,6 @@ VIEWS.detail=({id})=>{
       <div style="font-size:22px;font-weight:850;letter-spacing:-.02em">${v.company}</div>
       <div class="muted" style="font-size:14px;margin-top:3px">${v.codeName}</div>
       <div style="display:flex;gap:16px;margin-top:16px">
-        <div><div class="tiny muted">긴급도</div><div style="font-weight:800;color:${v.urgency==='high'?'#FF8494':'#84AEFF'}">${URG[v.urgency].t}</div></div>
         <div><div class="tiny muted">거리</div><div style="font-weight:800">${v.dist}km</div></div>
         <div><div class="tiny muted">예약</div><div style="font-weight:800">${v.reserve.replace('오늘 ','')}</div></div>
       </div>
@@ -2054,10 +2057,6 @@ VIEWS.guide=({id})=>{
         <div style="flex:1;padding-top:3px;font-size:14.5px;line-height:1.55;white-space:pre-line">${a}</div>
       </div>`).join('')}
   </div>
-  <div style="padding:0 20px;margin-top:6px" class="fadein">
-    <div class="tiny muted" style="text-align:center;line-height:1.6">모든 조치를 완료하면 아래 버튼이 활성화돼요.</div>
-    <button class="btn ghost" data-reguide="${id}" style="margin-top:12px">${ic('chevL',15)} 다른 원인으로 다시 진단</button>
-  </div>
   <div style="height:110px"></div>
 </div>
 <div class="dock"><button class="btn" id="toResult" data-id="${id}">${ic('check',17)} VOC 조치 결과 입력</button></div>`;
@@ -2085,17 +2084,19 @@ VIEWS.result=({id})=>{
       <div><div style="font-weight:800;font-size:14px">AI가 조치 결과를 작성했어요</div><div class="tiny muted">수행한 진단·조치를 바탕으로 표준 문구를 생성했습니다.<br>자유롭게 수정하세요.</div></div>
     </div>`:''}
 
-    <div class="section-t" style="margin-left:2px">조치 결과 <span style="color:var(--danger)">*</span></div>
-    <textarea class="ta" id="resultTa" rows="4" placeholder="조치 내용을 입력하세요" ${willType?'data-type="1"':''}>${willType?'':st.result}</textarea>
-    <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
-      ${((g?g.items:[]).slice(0,3)).map(it=>`<span class="chip tiny" data-quick="${it.r.replace(/"/g,'&quot;')}" style="cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">+ ${it.r.slice(0,16)}…</span>`).join('')}
-      <span class="chip tiny" data-voice="${id}" style="cursor:pointer;color:var(--primary);border-color:rgba(0,191,165,.4)">${ic('mic',12)} 음성으로 추가</span>
-    </div>
-
     <div class="section-t" style="margin-left:2px">처리 상태</div>
     <div style="display:flex;flex-wrap:wrap;gap:8px" id="statusPick">
       ${statuses.map((s)=>`<span class="chip ${s===st.compStatus?'on':''}" data-status="${s}" style="cursor:pointer">${s}</span>`).join('')}
     </div>
+
+    <div class="section-t" style="margin-left:2px;margin-right:2px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <span>조치 결과 <span style="color:var(--danger)">*</span></span>
+      <span class="chip tiny" data-voice="${id}" style="cursor:pointer;color:var(--primary);border-color:rgba(0,191,165,.4);flex:none">${ic('mic',12)} 음성으로 추가</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:11px">
+      ${(function(){var seen={},out=[];(g?g.items:[]).forEach(function(it){var p=polishResult(it.r);if(p&&!seen[p]){seen[p]=1;out.push(p);}});return out.slice(0,3);})().map(r=>`<span class="chip tiny" data-quick="${r.replace(/"/g,'&quot;')}" style="cursor:pointer;display:block;width:100%;white-space:normal;text-align:left;line-height:1.5;border-radius:12px;padding:9px 13px">+ ${r}</span>`).join('')}
+    </div>
+    <textarea class="ta" id="resultTa" rows="4" placeholder="조치 내용을 입력하세요" ${willType?'data-type="1"':''}>${willType?'':st.result}</textarea>
 
     <div class="section-t" style="margin-left:2px">추가 특이사항</div>
     <div class="card" style="padding:6px 16px">
@@ -2345,13 +2346,16 @@ $("#scrim").addEventListener('click',closeSheet);
 
 function sheetSchedule(id){
   const v=VOCS.find(x=>x.id===id);
-  const times=['오늘 13:20','오늘 14:00','오늘 15:30','오늘 16:40','내일 오전'];
+  const quick=['09:30','13:20','14:00','15:30','16:40'];
+  const m=(v.reserve||'').match(/(\d{1,2}):(\d{2})/);
+  const def=m?(('0'+m[1]).slice(-2)+':'+m[2]):'14:00';
   openSheet(`
     <div style="font-size:19px;font-weight:850">방문 일정 캘린더</div>
     <div class="tiny muted" style="margin-top:3px;margin-bottom:16px">${v.company} · ${v.contact}</div>
     <div class="tiny muted" style="font-weight:700;margin-bottom:8px">방문 예정 시간</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px" id="timePick">
-      ${times.map((t,i)=>`<span class="chip ${t===v.reserve?'on':''}" data-time="${t}" style="cursor:pointer;padding:9px 13px">${t}</span>`).join('')}
+    <input type="time" id="schTime" class="digclock" value="${def}" step="60">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px" id="timePick">
+      ${quick.map(t=>`<span class="chip" data-time="${t}" style="cursor:pointer;padding:8px 12px">${t}</span>`).join('')}
     </div>
     <div class="tiny muted" style="font-weight:700;margin:18px 0 8px">조율 상태</div>
     <div style="display:flex;gap:8px" id="schState">
@@ -2359,14 +2363,39 @@ function sheetSchedule(id){
       <span class="chip" data-state="고객 부재" style="cursor:pointer;flex:1;justify-content:center;padding:11px">고객 부재</span>
       <span class="chip" data-state="재조율" style="cursor:pointer;flex:1;justify-content:center;padding:11px">재조율</span>
     </div>
+    <div id="dateWrap" style="display:none;margin-top:16px">
+      <div class="tiny muted" style="font-weight:700;margin-bottom:8px">방문 날짜 변경</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button type="button" class="chip" id="dateBtn" style="cursor:pointer;padding:11px 15px;color:var(--primary);border-color:rgba(0,191,165,.45)">${ic('cal',15)} 날짜 추가</button>
+        <span class="tiny" id="dateLabel" style="font-weight:800;color:var(--text)"></span>
+      </div>
+      <input type="date" id="schDate" class="datefield" style="margin-top:10px;display:none">
+    </div>
     <textarea class="ta" id="callMemo" rows="2" style="margin-top:16px" placeholder="통화 메모 (예: 오후 4시 이후 가능)"></textarea>
     <button class="btn" style="margin-top:16px" data-savesch="${id}">일정 저장</button>
   `);
   const sh=$("#sheet");
-  let time=v.reserve, state='방문 확정';
-  sh.querySelectorAll('[data-time]').forEach(c=>c.onclick=()=>{sh.querySelectorAll('[data-time]').forEach(x=>x.classList.remove('on'));c.classList.add('on');time=c.dataset.time;});
-  sh.querySelectorAll('[data-state]').forEach(c=>c.onclick=()=>{sh.querySelectorAll('[data-state]').forEach(x=>x.classList.remove('on'));c.classList.add('on');state=c.dataset.state;});
-  sh.querySelector('[data-savesch]').onclick=()=>{STATE[id].schedule={time,state};closeSheet();toast(state+' · '+time+' 저장됨','clock');};
+  const timeInput=sh.querySelector('#schTime');
+  const dateWrap=sh.querySelector('#dateWrap');
+  const dateBtn=sh.querySelector('#dateBtn');
+  const dateInput=sh.querySelector('#schDate');
+  const dateLabel=sh.querySelector('#dateLabel');
+  let state='방문 확정', chosenDate='';
+  sh.querySelectorAll('[data-time]').forEach(c=>c.onclick=()=>{timeInput.value=c.dataset.time;haptic(c);});
+  sh.querySelectorAll('[data-state]').forEach(c=>c.onclick=()=>{
+    sh.querySelectorAll('[data-state]').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');state=c.dataset.state;
+    dateWrap.style.display=(state==='재조율')?'block':'none';
+  });
+  dateBtn.onclick=()=>{dateInput.style.display='block';if(dateInput.showPicker){try{dateInput.showPicker();}catch(e){dateInput.focus();}}else{dateInput.focus();}};
+  dateInput.onchange=()=>{chosenDate=dateInput.value;if(chosenDate){const p=chosenDate.split('-');dateLabel.textContent=`${+p[1]}월 ${+p[2]}일`;dateBtn.innerHTML=`${ic('cal',15)} 날짜 변경`;}};
+  sh.querySelector('[data-savesch]').onclick=()=>{
+    const t=timeInput.value||def;
+    let label=t;
+    if(state==='재조율' && chosenDate){const p=chosenDate.split('-');label=`${+p[1]}/${+p[2]} ${t}`;}
+    STATE[id].schedule={time:label,state,date:(state==='재조율'?chosenDate:null)};
+    closeSheet();toast(state+' · '+label+' 저장됨','clock');
+  };
 }
 function sheetSms(id){
   const v=VOCS.find(x=>x.id===id);
@@ -2529,7 +2558,6 @@ function bindScreen(el,name,params){
       if(done.has(i)){done.delete(i);sn.style.background='var(--surface3)';sn.style.color='var(--muted)';sn.textContent=i+1;s.style.borderColor='var(--line)';}
       else{done.add(i);sn.style.background='var(--grad-mint)';sn.style.color='#04121a';sn.innerHTML=ic('check',16,3.2);s.style.borderColor='rgba(0,191,165,.4)';haptic(s);}
     });
-    el.querySelectorAll('[data-reguide]').forEach(n=>n.onclick=()=>back());
     btn.onclick=()=>{STATE[params.id].actionDone=true;STATE[params.id].result='';push('result',{id:params.id});};
   }
 
