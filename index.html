@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="referrer" content="origin-when-cross-origin" />
 <meta name="theme-color" content="#070B16" />
 <title>에스원 Answer — 현장 CS 앱</title>
 <link rel="manifest" href="manifest.webmanifest" />
@@ -14,8 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="에스원 Answer" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=4b77bb0ad934116af60d6c69a7ca865f&autoload=false"></script>
 <style>
 /* =========================================================
    OnSite CS — Design System
@@ -4763,38 +4763,43 @@ function mapVocs(){
   else arr.sort((a,b)=>a.dist-b.dist);
   return arr;
 }
-function mkPin(){
-  var s='<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">'
-   +'<defs><filter id="sh" x="-40%" y="-20%" width="180%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="rgba(0,0,0,.4)"/></filter>'
-   +'<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF5E7A"/><stop offset="1" stop-color="#F5455F"/></linearGradient></defs>'
-   +'<path filter="url(#sh)" d="M16 1C8 1 1.5 7.5 1.5 15.5 1.5 26 16 41 16 41S30.5 26 30.5 15.5C30.5 7.5 24 1 16 1z" fill="url(#g)" stroke="#fff" stroke-width="2"/>'
-   +'<circle cx="16" cy="15.5" r="5.4" fill="#fff"/></svg>';
-  return L.icon({iconUrl:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s),iconSize:[32,42],iconAnchor:[16,40],popupAnchor:[0,-36]});
-}
+/* 카카오맵 SDK 준비 대기 (autoload=false → kakao.maps.load 후 사용) */
+var _kakaoReady=false,_kakaoQ=[];
+function whenKakao(cb){ if(_kakaoReady) return cb(); _kakaoQ.push(cb); }
+(function initKakao(){
+  if(window.kakao && kakao.maps && kakao.maps.load){
+    kakao.maps.load(function(){ _kakaoReady=true; _kakaoQ.splice(0).forEach(function(f){try{f();}catch(_){}}); });
+  }
+})();
 function openKakaoMap(id){
   var v=VOCS.find(function(x){return x.id===id;});
   if(v&&typeof v.lat==='number'){ window.open('https://map.kakao.com/link/to/'+encodeURIComponent(v.company)+','+v.lat+','+v.lng,'_blank'); toast('카카오맵을 엽니다','nav'); }
 }
-let _leafMap=null;
 function renderMap(scope){
   const el=scope.querySelector('#mapCanvas');
-  if(el && window.L){
-    if(_leafMap){try{_leafMap.remove();}catch(_){}_leafMap=null;}
-    const map=L.map(el,{attributionControl:false}).setView([36.48,127.25],11);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{maxZoom:20,subdomains:'abcd'}).addTo(map);
-    const pts=[];
-    VOCS.forEach(v=>{
-      if(typeof v.lat!=='number') return;
-      const mk=L.marker([v.lat,v.lng],{icon:mkPin()}).addTo(map);
-      mk.bindPopup('<div style="font-weight:800;font-size:13px;margin-bottom:2px">'+v.company+'</div>'
-        +'<div style="color:var(--muted);font-size:11.5px;margin-bottom:8px">'+v.short+' · '+v.dist+'km</div>'
-        +'<button onclick="openKakaoMap(\''+v.id+'\')" style="width:100%;padding:8px 10px;border:none;border-radius:9px;background:linear-gradient(135deg,#2E7BF6,#25C56A);color:#04121a;font-weight:800;font-size:12px;cursor:pointer">카카오맵 길찾기</button>');
-      pts.push([v.lat,v.lng]);
+  if(el){
+    el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:12.5px">지도 불러오는 중…</div>';
+    setTimeout(function(){ if(!_kakaoReady && el){ el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:12px;text-align:center;padding:0 24px;line-height:1.6">카카오지도를 불러오지 못했어요.<br>카카오 개발자센터에 이 사이트 도메인이<br>등록됐는지 확인해주세요.</div>'; } },5000);
+    whenKakao(function(){
+      try{
+        el.innerHTML='';
+        var map=new kakao.maps.Map(el,{center:new kakao.maps.LatLng(36.48,127.25),level:8});
+        var bounds=new kakao.maps.LatLngBounds();
+        var iw=new kakao.maps.InfoWindow({removable:true,zIndex:5});
+        VOCS.forEach(function(v){
+          if(typeof v.lat!=='number') return;
+          var pos=new kakao.maps.LatLng(v.lat,v.lng);
+          var marker=new kakao.maps.Marker({map:map,position:pos,title:v.company});
+          bounds.extend(pos);
+          kakao.maps.event.addListener(marker,'click',(function(v,marker){return function(){
+            iw.setContent('<div style="padding:9px 11px;font-size:12px;min-width:150px;line-height:1.5;font-family:inherit"><b>'+v.company+'</b><br><span style="color:#8E9398">'+v.short+' · '+v.dist+'km</span><br><button onclick="openKakaoMap(\''+v.id+'\')" style="margin-top:7px;width:100%;padding:7px;border:none;border-radius:8px;background:#0056D2;color:#fff;font-weight:700;font-size:12px;cursor:pointer">카카오맵 길찾기</button></div>');
+            iw.open(map,marker);
+          };})(v,marker));
+        });
+        if(!bounds.isEmpty()) map.setBounds(bounds);
+        setTimeout(function(){try{map.relayout(); if(!bounds.isEmpty())map.setBounds(bounds);}catch(_){}} ,160);
+      }catch(e){ el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:12.5px;text-align:center;padding:0 20px;line-height:1.5">카카오지도를 불러오지 못했어요.<br>(카카오 개발자센터 Web 도메인 등록 확인)</div>'; }
     });
-    _leafMap=map;
-    setTimeout(()=>{try{map.invalidateSize(); if(pts.length && map.getSize().x>40) map.fitBounds(pts,{padding:[28,28],maxZoom:15});}catch(_){}} ,120);
-  } else if(el){
-    el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:13px">지도를 불러오지 못했어요 (네트워크 확인)</div>';
   }
   renderMapList(scope);
   scope.querySelectorAll('#mapSort [data-sort]').forEach(c=>c.onclick=()=>{
@@ -4824,18 +4829,20 @@ function renderMapList(scope){
   listEl.querySelectorAll('[data-kakao]').forEach(n=>n.onclick=e=>{e.stopPropagation();openKakaoMap(n.dataset.kakao);});
 }
 function renderHomeMini(scope){
-  const el=scope.querySelector('#homeMini'); if(!el || el._leaflet_id) return;
+  const el=scope.querySelector('#homeMini'); if(!el || el._kInit) return; el._kInit=1;
   let near=[...VOCS].filter(v=>!STATE[v.id].completed).sort((a,b)=>a.dist-b.dist).slice(0,3);
   if(!near.length) near=[...VOCS].sort((a,b)=>a.dist-b.dist).slice(0,3);
-  if(window.L){
-    const map=L.map(el,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false,tap:false}).setView([36.48,127.25],11);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{maxZoom:20,subdomains:'abcd'}).addTo(map);
-    const pts=[];
-    near.forEach(v=>{ if(typeof v.lat!=='number')return; L.marker([v.lat,v.lng],{icon:mkPin()}).addTo(map); pts.push([v.lat,v.lng]); });
-    setTimeout(()=>{try{map.invalidateSize(); if(pts.length && map.getSize().x>40) map.fitBounds(pts,{padding:[24,24],maxZoom:13});}catch(_){}} ,120);
-  } else {
-    el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:12px">지도 미리보기 (네트워크 확인)</div>';
-  }
+  el.innerHTML='';
+  whenKakao(function(){
+    try{
+      var map=new kakao.maps.Map(el,{center:new kakao.maps.LatLng(36.48,127.25),level:8});
+      map.setDraggable(false); map.setZoomable(false);
+      var bounds=new kakao.maps.LatLngBounds();
+      near.forEach(function(v){ if(typeof v.lat!=='number')return; var pos=new kakao.maps.LatLng(v.lat,v.lng); new kakao.maps.Marker({map:map,position:pos}); bounds.extend(pos); });
+      if(!bounds.isEmpty()) map.setBounds(bounds);
+      setTimeout(function(){try{map.relayout(); if(!bounds.isEmpty())map.setBounds(bounds);}catch(_){}} ,160);
+    }catch(e){ el.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:12px">지도 미리보기</div>'; }
+  });
 }
 
 /* ---- Alerts ---- */
