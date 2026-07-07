@@ -193,6 +193,10 @@ textarea,input,button{word-break:keep-all;overflow-wrap:break-word;}
 .sw.on{background:linear-gradient(135deg,#2FE3C6,#22D3EE);border-color:transparent;}
 .sw i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .32s var(--spring2);box-shadow:0 2px 6px rgba(0,0,0,.3);}
 .sw.on i{transform:translateX(20px);}
+.cbx{width:24px;height:24px;border-radius:7px;border:2px solid var(--line2);flex:none;display:grid;place-items:center;transition:.2s;cursor:pointer;color:#04121a;}
+.cbx.on{background:var(--grad-mint);border-color:transparent;}
+.cbx svg{opacity:0;transform:scale(.5);transition:.2s var(--spring2);}
+.cbx.on svg{opacity:1;transform:scale(1);}
 
 /* ---------- Bottom sheet ---------- */
 .scrim{position:absolute;inset:0;background:rgba(3,6,14,.6);backdrop-filter:blur(3px);z-index:70;opacity:0;transition:opacity .3s;pointer-events:none;}
@@ -4351,6 +4355,8 @@ VIEWS.vocList=(p={})=>{
 };
 function vocCard(v,i){
   const st=STATE[v.id];
+  if(v._mins==null) v._mins=5+Math.floor(Math.random()*16); // 5~20분 (세션 내 고정)
+  const timeLabel=v._mins+'분';
   return `
 <div class="card" data-voc="${v.id}" style="cursor:pointer;margin-bottom:12px;opacity:0;transform:translateY(16px);animation:revUp .5s var(--spring) forwards;animation-delay:${i*.06}s;${v.urgency==='high'&&!st.completed?'border-color:rgba(255,91,114,.3)':''}">
   <div style="display:flex;justify-content:space-between;align-items:center">
@@ -4370,7 +4376,7 @@ function vocCard(v,i){
   <div style="background:var(--surface2);border-radius:12px;padding:11px 13px;margin-top:13px;font-size:13px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">"${v.symptom}"</div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-top:13px">
     <span class="tiny muted">${ic('pin',13)} ${v.short} · ${v.dist}km</span>
-    <span class="chip ${v.reserve.includes('오늘')?'on':''}" style="padding:5px 10px">${ic('clock',12)} ${v.reserve}</span>
+    <span class="chip" style="padding:5px 10px">${ic('clock',12)} ${timeLabel}</span>
   </div>
 </div>`;
 }
@@ -4628,8 +4634,8 @@ VIEWS.result=({id})=>{
 
     <div class="section-t" style="margin-left:2px">추가 특이사항</div>
     <div class="card" style="padding:6px 16px">
-      <div class="kv" style="align-items:center"><span class="k" style="color:var(--text);font-weight:700">부품 교체 발생</span><div class="sw" data-flag="part"><i></i></div></div>
-      <div class="kv" style="align-items:center;border:none"><span class="k" style="color:var(--text);font-weight:700">고객 확인 완료</span><div class="sw on" data-flag="confirm"><i></i></div></div>
+      <div class="kv" style="align-items:center;cursor:pointer" data-flag="part"><span class="k" style="color:var(--text);font-weight:700">부품 교체 발생</span><div class="cbx">${ic('check',15,3)}</div></div>
+      <div class="kv" style="align-items:center;border:none;cursor:pointer" data-flag="confirm"><span class="k" style="color:var(--text);font-weight:700">고객 확인 완료</span><div class="cbx on">${ic('check',15,3)}</div></div>
     </div>
   </div>
   <div style="height:120px"></div>
@@ -5046,7 +5052,7 @@ function bindScreen(el,name,params){
     toast('전화 앱으로 연결합니다<br>'+raw,'phone');
     try{ window.location.href='tel:'+num; }catch(_){}
   });
-  el.querySelectorAll('[data-nav]').forEach(n=>n.onclick=e=>{e.stopPropagation();haptic(n);push('navi',{id:n.dataset.nav});});
+  el.querySelectorAll('[data-nav]').forEach(n=>n.onclick=e=>{e.stopPropagation();haptic(n);openKakaoMap(n.dataset.nav);});
   el.querySelectorAll('[data-startnav]').forEach(n=>n.onclick=e=>{e.stopPropagation();haptic(n);
     var v=VOCS.find(x=>x.id===n.dataset.startnav);
     if(v&&v.lat){ window.open('https://map.kakao.com/link/to/'+encodeURIComponent(v.company)+','+v.lat+','+v.lng,'_blank'); toast('카카오맵 길찾기를 엽니다','nav'); }
@@ -5159,7 +5165,7 @@ function bindScreen(el,name,params){
     el.querySelectorAll('[data-quick]').forEach(c=>c.onclick=()=>{if(ta._finish)ta._finish();ta.value=(ta.value?ta.value+' ':'')+c.dataset.quick;st.result=ta.value;ta.focus();});
     el.querySelectorAll('[data-voice]').forEach(c=>c.onclick=()=>{if(ta._finish)ta._finish();sheetVoice(id,txt=>{ta.value=(ta.value?ta.value+' ':'')+txt;st.result=ta.value;toast('음성 변환 완료','mic');});});
     el.querySelectorAll('[data-status]').forEach(c=>c.onclick=()=>{el.querySelectorAll('[data-status]').forEach(x=>x.classList.remove('on'));c.classList.add('on');st.compStatus=c.dataset.status;});
-    el.querySelectorAll('[data-flag]').forEach(sw=>sw.onclick=()=>sw.classList.toggle('on'));
+    el.querySelectorAll('[data-flag]').forEach(row=>row.onclick=()=>{var b=row.querySelector('.cbx');if(b)b.classList.toggle('on');});
     const cb=el.querySelector('#complete');
     cb.onclick=()=>{
       if(ta._finish)ta._finish();

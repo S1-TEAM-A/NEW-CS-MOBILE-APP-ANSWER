@@ -1,6 +1,6 @@
 /* 에스원 Answer — Service Worker
    HTML은 네트워크 우선(항상 최신), 정적 자산은 캐시 우선 + 오프라인 폴백 */
-const CACHE = 'answer-v17';
+const CACHE = 'answer-v18';
 const ASSETS = [
   './',
   './index.html',
