@@ -1,6 +1,6 @@
 /* 에스원 Answer — Service Worker
    HTML은 네트워크 우선(항상 최신), 정적 자산은 캐시 우선 + 오프라인 폴백 */
-const CACHE = 'answer-v18';
+const CACHE = 'answer-v19';
 const ASSETS = [
   './',
   './index.html',
@@ -28,6 +28,10 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
+
+  // 외부 도메인(API 서버·카카오 등) 및 /api/ 요청은 캐시하지 않고 항상 네트워크로
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin || url.pathname.includes('/api/')) return;
 
   const accept = req.headers.get('accept') || '';
   const isHTML = req.mode === 'navigate' || req.destination === 'document' || accept.includes('text/html');

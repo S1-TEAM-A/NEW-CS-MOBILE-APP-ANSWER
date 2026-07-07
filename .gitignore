@@ -1,6 +1,13 @@
 # 원본 데이터 (고객/직원 정보 포함 — 공개 저장소에 올리지 않음)
 *.xlsx
 *.csv
+*.xlsb
+
+# 백엔드 의존성
+server/node_modules/
+
+# 디자인 참고 이미지
+APP DESIGN REFERENCE.jpg
 
 # 로컬 개발 설정
 .claude/
